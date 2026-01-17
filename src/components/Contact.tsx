@@ -33,7 +33,7 @@ const Contact = () => {
     );
     
     // Abrir WhatsApp con el mensaje
-    window.open(`https://wa.me/5215512345678?text=${whatsappMessage}`, "_blank");
+    window.open(`https://wa.me/5215644853203?text=${whatsappMessage}`, "_blank");
     
     toast({
       title: "¡Mensaje preparado!",
@@ -45,7 +45,7 @@ const Contact = () => {
   };
 
   const handleDirectWhatsApp = () => {
-    window.open("https://wa.me/5215512345678?text=Hola,%20me%20gustaría%20recibir%20información%20sobre%20sus%20productos", "_blank");
+    window.open("https://wa.me/5215644853203?text=Hola,%20me%20gustaría%20recibir%20información%20sobre%20sus%20productos", "_blank");
   };
 
   return (
