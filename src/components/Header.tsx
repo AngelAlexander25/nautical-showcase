@@ -15,7 +15,7 @@ const Header = () => {
   ];
 
   const handleWhatsApp = () => {
-    window.open("https://wa.me/5215512345678?text=Hola,%20me%20interesa%20información%20sobre%20sus%20productos", "_blank");
+    window.open("https://wa.me/5215644853203?text=Hola,%20me%20interesa%20información%20sobre%20sus%20productos", "_blank");
   };
 
   return (

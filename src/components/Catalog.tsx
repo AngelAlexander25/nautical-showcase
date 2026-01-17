@@ -42,7 +42,6 @@ const products = [
     image: motorF300,
     description: "Motor fuera de borda V6 de 4 tiempos, máxima potencia para embarcaciones grandes.",
     features: ["4 Tiempos", "300 HP", "V6"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m2",
@@ -51,7 +50,6 @@ const products = [
     image: motorF250,
     description: "Motor V6 de alta potencia con tecnología digital. Rendimiento excepcional.",
     features: ["4 Tiempos", "300 HP", "Digital"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m3",
@@ -60,7 +58,6 @@ const products = [
     image: motorF250,
     description: "Potente motor V6 de 250 HP. Ideal para embarcaciones de alto rendimiento.",
     features: ["4 Tiempos", "250 HP", "V6"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m4",
@@ -69,7 +66,6 @@ const products = [
     image: motorF200,
     description: "Motor de 200 HP con control digital. Eficiencia y potencia.",
     features: ["4 Tiempos", "200 HP", "Control Digital"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m5",
@@ -78,7 +74,6 @@ const products = [
     image: motorF150,
     description: "Motor versátil de 150 HP. Excelente relación potencia-peso.",
     features: ["4 Tiempos", "150 HP", "Inyección"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m6",
@@ -87,7 +82,6 @@ const products = [
     image: motorF115,
     description: "Motor eficiente de 115 HP. Diseño compacto y potente.",
     features: ["4 Tiempos", "115 HP", "Compacto"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m7",
@@ -96,7 +90,6 @@ const products = [
     image: motorF115,
     description: "Versión mejorada del F115 con características premium.",
     features: ["4 Tiempos", "115 HP", "Premium"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m8",
@@ -105,7 +98,6 @@ const products = [
     image: motorF100,
     description: "Motor confiable de 100 HP para uso comercial y recreativo.",
     features: ["4 Tiempos", "100 HP", "Versátil"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m9",
@@ -114,7 +106,6 @@ const products = [
     image: motorF75,
     description: "Motor compacto de 75 HP. Ideal para lanchas medianas.",
     features: ["4 Tiempos", "75 HP", "Eficiente"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m10",
@@ -123,7 +114,6 @@ const products = [
     image: motorF70,
     description: "Motor de 70 HP con excelente economía de combustible.",
     features: ["4 Tiempos", "70 HP", "Económico"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m11",
@@ -132,7 +122,6 @@ const products = [
     image: motorF60,
     description: "Motor de 60 HP de alto torque para trabajo pesado.",
     features: ["4 Tiempos", "60 HP", "Alto Torque"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m12",
@@ -141,7 +130,6 @@ const products = [
     image: motorF50,
     description: "Motor de 50 HP compacto y confiable.",
     features: ["4 Tiempos", "50 HP", "Compacto"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m13",
@@ -150,7 +138,6 @@ const products = [
     image: motorF40,
     description: "Motor portátil de 40 HP. Fácil de transportar.",
     features: ["4 Tiempos", "40 HP", "Portátil"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m14",
@@ -159,7 +146,6 @@ const products = [
     image: motorF30,
     description: "Motor ligero de 30 HP para embarcaciones pequeñas.",
     features: ["4 Tiempos", "30 HP", "Ligero"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m15",
@@ -168,7 +154,6 @@ const products = [
     image: motorF25,
     description: "Motor portátil de 25 HP. Arranque manual.",
     features: ["4 Tiempos", "25 HP", "Manual"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m16",
@@ -177,7 +162,6 @@ const products = [
     image: motorF20,
     description: "Motor ultraligero de 20 HP para uso recreativo.",
     features: ["4 Tiempos", "20 HP", "Ultraligero"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m17",
@@ -186,7 +170,6 @@ const products = [
     image: motorF15,
     description: "Motor compacto de 15 HP. Perfecto para botes auxiliares.",
     features: ["4 Tiempos", "15 HP", "Auxiliar"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   // MOTORES 2 TIEMPOS
   {
@@ -196,7 +179,6 @@ const products = [
     image: motorF200,
     description: "Motor 2 tiempos de 200 HP. Potencia máxima.",
     features: ["2 Tiempos", "200 HP", "SST"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m19",
@@ -205,7 +187,6 @@ const products = [
     image: motorF150,
     description: "Motor 2 tiempos de 150 HP para alto rendimiento.",
     features: ["2 Tiempos", "150 HP", "SST"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m20",
@@ -214,7 +195,6 @@ const products = [
     image: motor85,
     description: "Motor 2 tiempos de 85 HP. Confiable y potente.",
     features: ["2 Tiempos", "85 HP", "Comercial"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m21",
@@ -223,7 +203,6 @@ const products = [
     image: motorF75,
     description: "Motor Enduro de 75 HP para trabajo pesado.",
     features: ["2 Tiempos", "75 HP", "Enduro"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m22",
@@ -232,7 +211,6 @@ const products = [
     image: motorF60,
     description: "Motor Enduro de 60 HP. Resistente y duradero.",
     features: ["2 Tiempos", "60 HP", "Enduro"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m23",
@@ -241,7 +219,6 @@ const products = [
     image: motorF40,
     description: "Motor 2 tiempos de 40 HP económico.",
     features: ["2 Tiempos", "40 HP", "Económico"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "m24",
@@ -250,7 +227,6 @@ const products = [
     image: motorF25,
     description: "Motor Enduro de 25 HP para pesca comercial.",
     features: ["2 Tiempos", "25 HP", "Enduro"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   // LANCHAS IMEMSA
   {
@@ -260,7 +236,6 @@ const products = [
     image: lanchaW267,
     description: "Lancha de fibra de vidrio de 26.7 pies. Diseño versátil para pesca y recreación.",
     features: ["26.7 pies", "Fibra de vidrio", "Consola central"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l2",
@@ -269,7 +244,6 @@ const products = [
     image: lanchaR18,
     description: "Lancha compacta de 18 pies. Ideal para pesca deportiva.",
     features: ["18 pies", "Fibra de vidrio", "Pesca"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l3",
@@ -278,7 +252,6 @@ const products = [
     image: lanchaR22,
     description: "Lancha de 22 pies con amplio espacio. Confortable y estable.",
     features: ["22 pies", "Fibra de vidrio", "Espaciosa"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l4",
@@ -287,7 +260,6 @@ const products = [
     image: lanchaW23M,
     description: "Lancha de 23 pies con diseño moderno y elegante.",
     features: ["23 pies", "Diseño moderno", "Versátil"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l5",
@@ -296,7 +268,6 @@ const products = [
     image: lanchaR14,
     description: "Lancha pequeña de 14 pies. Perfecta para iniciantes.",
     features: ["14 pies", "Compacta", "Económica"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l6",
@@ -305,7 +276,6 @@ const products = [
     image: lanchaW16,
     description: "Lancha de 16 pies ideal para paseos y pesca ligera.",
     features: ["16 pies", "Recreativa", "Ligera"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l7",
@@ -314,7 +284,6 @@ const products = [
     image: lanchaJ18,
     description: "Lancha de 18 pies con interior amplio. Cómoda navegación.",
     features: ["18 pies", "Interior amplio", "Cómoda"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l8",
@@ -323,7 +292,6 @@ const products = [
     image: lanchaW22,
     description: "Lancha de 22 pies con diseño angular moderno.",
     features: ["22 pies", "Diseño angular", "Moderna"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l9",
@@ -332,7 +300,6 @@ const products = [
     image: lanchaW22,
     description: "Versión mejorada del W-22 con más accesorios.",
     features: ["22 pies", "Equipada", "Premium"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l10",
@@ -341,7 +308,6 @@ const products = [
     image: lanchaC23,
     description: "Lancha de pesca de 23 pies con consola central.",
     features: ["23 pies", "Consola central", "Pesca deportiva"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l11",
@@ -350,7 +316,6 @@ const products = [
     image: lanchaW23II,
     description: "Lancha deportiva de 23 pies con gráficos distintivos.",
     features: ["23 pies", "Deportiva", "Distintiva"],
-    externalUrl: "https://imemsa.com.mx/",
   },
   {
     id: "l12",
@@ -359,7 +324,6 @@ const products = [
     image: lanchaW23M,
     description: "Lancha de trabajo de 23 pies. Resistente y durable.",
     features: ["23 pies", "Trabajo pesado", "Resistente"],
-    externalUrl: "https://imemsa.com.mx/",
   },
 ];
 

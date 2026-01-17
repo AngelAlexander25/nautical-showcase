@@ -1,4 +1,4 @@
-import { MessageCircle, ExternalLink } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,15 +10,14 @@ interface ProductCardProps {
   image: string;
   description: string;
   features?: string[];
-  externalUrl?: string;
 }
 
-const ProductCard = ({ id, name, category, image, description, features, externalUrl }: ProductCardProps) => {
+const ProductCard = ({ id, name, category, image, description, features }: ProductCardProps) => {
   const handleWhatsApp = () => {
     const message = encodeURIComponent(
       `Hola, me interesa obtener información sobre el producto: ${name}. ¿Podrían ayudarme?`
     );
-    window.open(`https://wa.me/5215512345678?text=${message}`, "_blank");
+    window.open(`https://wa.me/5215644853203?text=${message}`, "_blank");
   };
 
   return (
@@ -57,24 +56,14 @@ const ProductCard = ({ id, name, category, image, description, features, externa
         )}
       </CardContent>
 
-      <CardFooter className="p-6 pt-0 flex gap-3">
+      <CardFooter className="p-6 pt-0">
         <Button
           onClick={handleWhatsApp}
-          className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-primary-foreground gap-2"
+          className="w-full bg-[#25D366] hover:bg-[#20BD5A] text-primary-foreground gap-2"
         >
           <MessageCircle className="w-4 h-4" />
           Consultar
         </Button>
-        {externalUrl && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => window.open(externalUrl, "_blank")}
-            className="border-border hover:border-primary hover:text-primary"
-          >
-            <ExternalLink className="w-4 h-4" />
-          </Button>
-        )}
       </CardFooter>
     </Card>
   );
