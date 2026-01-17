@@ -90,10 +90,10 @@ const Footer = () => {
           {/* Credits */}
           <div className="mt-6 pt-4 border-t border-primary-foreground/10 text-center">
             <p className="text-primary-foreground/50 text-xs">
-              🎨 Portafolio diseñado y desarrollado por <span className="text-secondary font-medium">Oswa</span>
+              Portafolio creado por <span className="text-secondary font-medium">Angel Alexander</span>
             </p>
             <p className="text-primary-foreground/40 text-xs mt-1">
-              * Este es un proyecto ficticio creado con fines demostrativos para portafolio.
+              * Este es un proyecto ficticio creado con fines demostrativos.
             </p>
           </div>
         </div>
