@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import AnimatedSection, { StaggerContainer, StaggerItem } from "./AnimatedSection";
 
 interface Product {
   id: string;
@@ -208,7 +209,7 @@ const Catalog = () => {
     <section id="catalogo" className="py-24 bg-background">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-16">
+        <AnimatedSection className="text-center mb-16">
           <span className="text-secondary font-semibold uppercase tracking-wider text-sm">
             Nuestros Productos
           </span>
@@ -218,10 +219,10 @@ const Catalog = () => {
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Explora nuestra seleccion completa de productos. Contactanos por WhatsApp para cotizaciones.
           </p>
-        </div>
+        </AnimatedSection>
 
-        {/* Product Lines Grid - 4 columns like the reference image */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Product Lines Grid */}
+        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {productLines.map((line) => (
             <div key={line.id} className="group">
               {/* Line Title */}
@@ -266,7 +267,7 @@ const Catalog = () => {
               </div>
             </div>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* CTA */}
         <div className="text-center mt-16">
