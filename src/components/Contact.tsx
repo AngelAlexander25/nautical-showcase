@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Send, Phone, MapPin, MessageCircle, Clock, Facebook } from "lucide-react";
+import { Send, Phone, MessageCircle, Clock, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { SlideInLeft, SlideInRight } from "./AnimatedSection";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -48,7 +49,7 @@ const Contact = () => {
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Contact Info */}
-          <div>
+          <SlideInLeft>
             <span className="text-secondary font-semibold uppercase tracking-wider text-sm">
               Contactanos
             </span>
@@ -120,9 +121,10 @@ const Contact = () => {
               <MessageCircle className="w-5 h-5" />
               Escribenos por WhatsApp
             </Button>
-          </div>
+          </SlideInLeft>
 
           {/* Contact Form - Agenda cita */}
+          <SlideInRight>
           <div className="bg-card rounded-2xl p-8 border border-border shadow-xl">
             <h3 className="font-display text-2xl font-semibold text-foreground mb-6">
               Agenda tu Cita
@@ -195,6 +197,7 @@ const Contact = () => {
               </Button>
             </form>
           </div>
+          </SlideInRight>
         </div>
       </div>
     </section>
