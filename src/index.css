@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 210 50% 10%;
+    --background: 0 0% 100%;
+    --foreground: 215 50% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 50% 10%;
+    --card-foreground: 215 50% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 50% 10%;
+    --popover-foreground: 215 50% 12%;
 
-    --primary: 201 80% 24%;
+    --primary: 215 80% 35%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 43 74% 49%;
+    --secondary: 0 75% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 30% 94%;
-    --muted-foreground: 210 20% 40%;
+    --muted: 215 20% 95%;
+    --muted-foreground: 215 15% 45%;
 
-    --accent: 201 60% 90%;
-    --accent-foreground: 201 80% 24%;
+    --accent: 215 60% 92%;
+    --accent-foreground: 215 80% 35%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 210 25% 88%;
-    --input: 210 25% 88%;
-    --ring: 201 80% 24%;
+    --border: 215 20% 88%;
+    --input: 215 20% 88%;
+    --ring: 215 80% 35%;
 
     --radius: 0.75rem;
 
-    /* Custom marine colors */
-    --ocean-deep: 201 80% 18%;
-    --ocean-light: 201 60% 45%;
-    --gold: 43 74% 49%;
-    --gold-light: 43 74% 65%;
-    --sand: 36 33% 94%;
-    --navy: 210 50% 15%;
+    /* Custom brand colors */
+    --ocean-deep: 215 80% 20%;
+    --ocean-light: 215 60% 45%;
+    --gold: 0 75% 50%;
+    --gold-light: 0 65% 60%;
+    --sand: 0 0% 96%;
+    --navy: 215 60% 15%;
 
     /* Gradients */
-    --gradient-ocean: linear-gradient(135deg, hsl(201 80% 24%) 0%, hsl(201 80% 18%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(43 74% 49%) 0%, hsl(43 74% 65%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsla(201, 80%, 18%, 0.7) 0%, hsla(201, 80%, 24%, 0.9) 100%);
+    --gradient-ocean: linear-gradient(135deg, hsl(215 80% 35%) 0%, hsl(215 80% 20%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(0 75% 50%) 0%, hsl(0 65% 60%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsla(215, 80%, 15%, 0.7) 0%, hsla(215, 80%, 25%, 0.9) 100%);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -58,42 +58,42 @@
   }
 
   .dark {
-    --background: 210 50% 8%;
-    --foreground: 210 40% 98%;
+    --background: 215 50% 8%;
+    --foreground: 0 0% 98%;
 
-    --card: 210 50% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 215 50% 10%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 210 50% 10%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 215 50% 10%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 201 60% 45%;
+    --primary: 215 70% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 43 74% 55%;
+    --secondary: 0 70% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 15%;
-    --muted-foreground: 210 20% 65%;
+    --muted: 215 40% 15%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 201 50% 20%;
-    --accent-foreground: 201 60% 80%;
+    --accent: 215 50% 20%;
+    --accent-foreground: 215 60% 80%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 210 40% 20%;
-    --input: 210 40% 20%;
-    --ring: 201 60% 45%;
+    --border: 215 40% 20%;
+    --input: 215 40% 20%;
+    --ring: 215 70% 50%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 215 50% 10%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 215 70% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 215 40% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 215 40% 15%;
+    --sidebar-ring: 215 70% 50%;
   }
 }
 
@@ -114,18 +114,18 @@
 
 @layer utilities {
   .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(43 74% 49%) 0%, hsl(43 74% 65%) 100%);
+    background: linear-gradient(135deg, hsl(0 75% 50%) 0%, hsl(0 65% 60%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .bg-ocean-gradient {
-    background: linear-gradient(135deg, hsl(201 80% 24%) 0%, hsl(201 80% 18%) 100%);
+    background: linear-gradient(135deg, hsl(215 80% 35%) 0%, hsl(215 80% 20%) 100%);
   }
 
   .bg-hero-overlay {
-    background: linear-gradient(180deg, hsla(201, 80%, 10%, 0.5) 0%, hsla(201, 80%, 18%, 0.85) 100%);
+    background: linear-gradient(180deg, hsla(215, 80%, 12%, 0.5) 0%, hsla(215, 80%, 20%, 0.85) 100%);
   }
 
   .animate-float {
