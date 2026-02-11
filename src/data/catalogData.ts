@@ -190,10 +190,20 @@ import YamalubeTrans from "@/assets/linea de lubricantes/botellasTrans_Yamalube-
 import YamalubeCubeta from "@/assets/linea de lubricantes/cubetaYamalube-19L.png";
 
 // === TYPES ===
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  PARA EDITAR INFO DE PRODUCTOS:                              ║
+// ║  Cada producto tiene estos campos que puedes modificar:       ║
+// ║  - name: Nombre del producto                                  ║
+// ║  - description: Descripcion del producto                      ║
+// ║  - price: Precio (ej: "$45,000 MXN" o "Cotizar")            ║
+// ║  - features: Lista de caracteristicas ["feat1", "feat2"]      ║
+// ║  - images: Ya estan mapeadas a tus carpetas de assets         ║
+// ╚══════════════════════════════════════════════════════════════╝
 export interface Product {
   id: string;
   name: string;
   description: string;
+  price?: string; // <-- Pon aqui el precio, ej: "$120,000 MXN" o "Cotizar"
   features: string[];
   images: string[];
 }
