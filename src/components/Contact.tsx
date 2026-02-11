@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { Send, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
+import { Send, Phone, MessageCircle, Clock, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { SlideInLeft, SlideInRight } from "./AnimatedSection";
 
 const Contact = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     phone: "",
-    product: "",
+    service: "",
     message: "",
   });
 
@@ -22,30 +22,26 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Construir mensaje para WhatsApp
     const whatsappMessage = encodeURIComponent(
-      `*Nueva Consulta - Aqua Servi*\n\n` +
+      `*Solicitud de Cita - Aqua Servi*\n\n` +
       `*Nombre:* ${formData.name}\n` +
-      `*Email:* ${formData.email}\n` +
-      `*Teléfono:* ${formData.phone}\n` +
-      `*Producto de interés:* ${formData.product}\n` +
+      `*Telefono:* ${formData.phone}\n` +
+      `*Servicio:* ${formData.service}\n` +
       `*Mensaje:* ${formData.message}`
     );
     
-    // Abrir WhatsApp con el mensaje
-    window.open(`https://wa.me/5215644853203?text=${whatsappMessage}`, "_blank");
+    window.open(`https://wa.me/529843175479?text=${whatsappMessage}`, "_blank");
     
     toast({
-      title: "¡Mensaje preparado!",
-      description: "Te redirigimos a WhatsApp para enviar tu consulta.",
+      title: "Mensaje preparado",
+      description: "Te redirigimos a WhatsApp para agendar tu cita.",
     });
     
-    // Limpiar formulario
-    setFormData({ name: "", email: "", phone: "", product: "", message: "" });
+    setFormData({ name: "", phone: "", service: "", message: "" });
   };
 
   const handleDirectWhatsApp = () => {
-    window.open("https://wa.me/5215644853203?text=Hola,%20me%20gustaría%20recibir%20información%20sobre%20sus%20productos", "_blank");
+    window.open("https://wa.me/529843175479?text=Hola,%20me%20gustaria%20recibir%20informacion%20sobre%20sus%20productos", "_blank");
   };
 
   return (
@@ -53,16 +49,16 @@ const Contact = () => {
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Contact Info */}
-          <div>
+          <SlideInLeft>
             <span className="text-secondary font-semibold uppercase tracking-wider text-sm">
-              Contáctanos
+              Contactanos
             </span>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mt-2 mb-6">
-              ¿Listo para <span className="text-primary">Navegar?</span>
+              Listo para <span className="text-primary">Navegar?</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-10 leading-relaxed">
-              Estamos aquí para ayudarte a encontrar el equipo perfecto. Contáctanos y un asesor 
-              especializado te atenderá de inmediato.
+              Estamos aqui para ayudarte a encontrar el equipo perfecto. Contactanos y un asesor 
+              especializado te atendera de inmediato.
             </p>
 
             {/* Contact Cards */}
@@ -72,28 +68,46 @@ const Contact = () => {
                   <Phone className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Teléfono</h3>
-                  <p className="text-muted-foreground">+52 55 1234 5678</p>
+                  <h3 className="font-semibold text-foreground mb-1">Telefono</h3>
+                  <p className="text-muted-foreground">(998) 880 0590</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-5 rounded-xl bg-card border border-border">
                 <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-5 h-5 text-primary" />
+                  <MessageCircle className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Email</h3>
-                  <p className="text-muted-foreground">contacto@aquaservi.com</p>
+                  <h3 className="font-semibold text-foreground mb-1">WhatsApp</h3>
+                  <p className="text-muted-foreground">(984) 317 5479</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-5 rounded-xl bg-card border border-border">
                 <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 text-primary" />
+                  <Clock className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Ubicación</h3>
-                  <p className="text-muted-foreground">Ciudad de México, México</p>
+                  <h3 className="font-semibold text-foreground mb-1">Horario</h3>
+                  <p className="text-muted-foreground">Lunes a Viernes: 8:00 AM - 5:00 PM</p>
+                  <p className="text-muted-foreground">Sabados: 8:00 AM - 2:00 PM</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 p-5 rounded-xl bg-card border border-border">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Facebook className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground mb-1">Facebook</h3>
+                  <a
+                    href="https://www.facebook.com/share/1Dks3dEU5K/?mibextid=wwXIfr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Visitanos en Facebook
+                  </a>
                 </div>
               </div>
             </div>
@@ -102,59 +116,29 @@ const Contact = () => {
             <Button
               onClick={handleDirectWhatsApp}
               size="lg"
-              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20BD5A] text-primary-foreground gap-3 whatsapp-pulse"
+              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20BD5A] text-white gap-3 whatsapp-pulse"
             >
               <MessageCircle className="w-5 h-5" />
-              Escríbenos por WhatsApp
+              Escribenos por WhatsApp
             </Button>
-          </div>
+          </SlideInLeft>
 
-          {/* Contact Form */}
+          {/* Contact Form - Agenda cita */}
+          <SlideInRight>
           <div className="bg-card rounded-2xl p-8 border border-border shadow-xl">
             <h3 className="font-display text-2xl font-semibold text-foreground mb-6">
-              Envía tu Consulta
+              Agenda tu Cita
             </h3>
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Nombre Completo *
-                  </label>
-                  <Input
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Tu nombre"
-                    required
-                    className="bg-background"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Teléfono *
-                  </label>
-                  <Input
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+52 55 1234 5678"
-                    required
-                    className="bg-background"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Email *
+                  Nombre Completo *
                 </label>
                 <Input
-                  name="email"
-                  type="email"
-                  value={formData.email}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  placeholder="tu@email.com"
+                  placeholder="Tu nombre"
                   required
                   className="bg-background"
                 />
@@ -162,13 +146,28 @@ const Contact = () => {
 
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Producto de Interés
+                  Telefono *
                 </label>
                 <Input
-                  name="product"
-                  value={formData.product}
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Ej: Motor Yamaha 115 HP"
+                  placeholder="(998) 123 4567"
+                  required
+                  className="bg-background"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Servicio de Interes
+                </label>
+                <Input
+                  name="service"
+                  value={formData.service}
+                  onChange={handleChange}
+                  placeholder="Ej: Mantenimiento de motor, Cotizacion de lancha"
                   className="bg-background"
                 />
               </div>
@@ -181,7 +180,7 @@ const Contact = () => {
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Cuéntanos qué necesitas..."
+                  placeholder="Cuentanos que necesitas..."
                   rows={4}
                   required
                   className="bg-background resize-none"
@@ -194,10 +193,11 @@ const Contact = () => {
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
               >
                 <Send className="w-4 h-4" />
-                Enviar por WhatsApp
+                Agendar Cita por WhatsApp
               </Button>
             </form>
           </div>
+          </SlideInRight>
         </div>
       </div>
     </section>
