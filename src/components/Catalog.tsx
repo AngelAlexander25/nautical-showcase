@@ -175,6 +175,10 @@ const Catalog = () => {
                 </div>
               )}
 
+              {selectedProduct.price && (
+                <p className="text-2xl font-bold text-primary">{selectedProduct.price}</p>
+              )}
+
               <p className="text-muted-foreground leading-relaxed">{selectedProduct.description}</p>
 
               <div className="flex flex-wrap gap-2">
