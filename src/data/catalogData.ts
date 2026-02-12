@@ -199,14 +199,46 @@ import YamalubeCubeta from "@/assets/linea de lubricantes/cubetaYamalube-19L.png
 // ║  - features: Lista de caracteristicas ["feat1", "feat2"]      ║
 // ║  - images: Ya estan mapeadas a tus carpetas de assets         ║
 // ╚══════════════════════════════════════════════════════════════╝
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  ESTRUCTURA DE PRODUCTO - GUIA RAPIDA                        ║
+// ║                                                               ║
+// ║  name: Nombre del producto                                    ║
+// ║  description: Descripcion corta                               ║
+// ║  tipo: Ej "4 Tiempos", "2 Tiempos", "Fibra de vidrio"       ║
+// ║  variantes: Lista de modelos con precio individual            ║
+// ║    { modelo: "FL300GET2X", precio: "$41,231.04 USD" }        ║
+// ║  notasPrecio: Textos debajo de precios (tipo de cambio, etc) ║
+// ║  compatibles: Lanchas o productos compatibles                 ║
+// ║  documentos: Links a manuales/catálogos de partes             ║
+// ║    { nombre: "Manual Propietario", archivo: "manual.pdf" }   ║
+// ║  specs: Ficha tecnica { "Potencia": "300 HP" }               ║
+// ║  features: Tags cortos ["300 HP", "V6"]                      ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+export interface ProductVariant {
+  modelo: string;
+  precio: string;
+  nota?: string; // Ej: "Precio Incluye I.V.A."
+}
+
+export interface ProductDocument {
+  nombre: string; // Ej: "Manual Propietario", "Catálogo de Partes"
+  archivo: string; // Nombre del archivo PDF
+}
+
 export interface Product {
   id: string;
   name: string;
   description: string;
-  price?: string;
+  tipo?: string; // Ej: "4 Tiempos", "2 Tiempos"
+  price?: string; // Precio unico (si no tiene variantes)
+  variantes?: ProductVariant[]; // Multiples modelos con precios
+  notasPrecio?: string[]; // Notas debajo de precios
+  compatibles?: string[]; // Productos compatibles
+  documentos?: ProductDocument[]; // Manuales y catálogos
   features: string[];
   images: string[];
-  specs?: Record<string, string>; // <-- Ficha tecnica: { "Potencia": "300 HP", "Peso": "263 kg" }
+  specs?: Record<string, string>;
 }
 
 export interface ProductCategory {
@@ -256,7 +288,29 @@ export const productLines: ProductLine[] = [
         id: "motores",
         name: "Motores Fuera de Borda",
         products: [
-          { id: "m-f300get", name: "F300 GET", description: "Motor fuera de borda V6 de 300 HP. Maxima potencia.", features: ["300 HP", "4 Tiempos", "V6"], images: [F300GET_1, F300GET_2, F300GET_3] },
+          {
+            id: "m-f300get", name: "F300 GET",
+            description: "Motor fuera de borda V6 de 300 HP. Maxima potencia.",
+            tipo: "4 Tiempos",
+            variantes: [
+              { modelo: "FL300GET2X", precio: "$41,231.04 USD", nota: "Precio Incluye I.V.A." },
+              { modelo: "F300GET2X", precio: "$38,894.80 USD", nota: "Precio Incluye I.V.A." },
+              { modelo: "FL300GET2U", precio: "$40,406.28 USD", nota: "Precio Incluye I.V.A." },
+              { modelo: "F300GET2U", precio: "$37,657.08 USD", nota: "Precio Incluye I.V.A." },
+            ],
+            notasPrecio: [
+              "TIPO DE CAMBIO $17.41 MXN 11 DE FEBRERO DE 2026 UTC",
+              "*PRECIO SUJETO AL TIPO DE CAMBIO DEL DÍA DE LA COMPRA",
+              "**PRECIOS SUJETOS A CAMBIO SIN PREVIO AVISO",
+            ],
+            compatibles: ["Lancha IMEMSA W29", "Lancha IMEMSA W33"],
+            documentos: [
+              { nombre: "Manual Propietario", archivo: "FL250P-FL300G.pdf" },
+              { nombre: "Catálogo de Partes", archivo: "F300GET2X_.pdf" },
+            ],
+            features: ["300 HP", "4 Tiempos", "V6"],
+            images: [F300GET_1, F300GET_2, F300GET_3],
+          },
           { id: "m-f300detx", name: "F300 DETX", description: "Motor 300 HP version DETX. Alto rendimiento.", features: ["300 HP", "4 Tiempos", "DETX"], images: [F300DETX_1, F300DETX_2] },
           { id: "m-f250", name: "F250", description: "Motor V6 de 250 HP. Potencia para embarcaciones grandes.", features: ["250 HP", "4 Tiempos", "V6"], images: [F250P_1, F250PET_2] },
           { id: "m-200aetx", name: "200 AETX", description: "Motor de 200 HP version AETX. Rendimiento superior.", features: ["200 HP", "4 Tiempos", "AETX"], images: [A200AETX_1, A200AETX_2] },

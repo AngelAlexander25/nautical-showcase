@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { productLines, type Product } from "@/data/catalogData";
+import { productLines, type Product, type ProductVariant } from "@/data/catalogData";
 
 const CatalogPage = () => {
   const navigate = useNavigate();
@@ -170,8 +170,40 @@ const CatalogPage = () => {
                 </div>
               )}
 
-              {selectedProduct.price && (
+              {/* Tipo */}
+              {selectedProduct.tipo && (
+                <p className="text-xl font-bold text-foreground">{selectedProduct.tipo}</p>
+              )}
+
+              {/* Variantes con precios */}
+              {selectedProduct.variantes && selectedProduct.variantes.length > 0 && (
+                <div className="space-y-4">
+                  {selectedProduct.variantes.map((v, i) => (
+                    <div key={i}>
+                      <p className="text-sm">
+                        <span className="font-bold text-primary">{v.modelo}:</span>{" "}
+                        <span className="font-semibold text-foreground">{v.precio}</span>
+                      </p>
+                      {v.nota && <p className="text-xs text-muted-foreground">{v.nota}</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Precio unico (si no tiene variantes) */}
+              {!selectedProduct.variantes && selectedProduct.price && (
                 <p className="text-2xl font-bold text-primary">{selectedProduct.price}</p>
+              )}
+
+              {/* Notas de precio */}
+              {selectedProduct.notasPrecio && selectedProduct.notasPrecio.length > 0 && (
+                <div className="space-y-1 pt-2">
+                  {selectedProduct.notasPrecio.map((nota, i) => (
+                    <p key={i} className={`text-xs ${i === 0 ? "text-destructive font-semibold" : "text-muted-foreground italic"}`}>
+                      {nota}
+                    </p>
+                  ))}
+                </div>
               )}
 
               <p className="text-muted-foreground leading-relaxed">{selectedProduct.description}</p>
@@ -198,6 +230,24 @@ const CatalogPage = () => {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Compatibles y Documentos */}
+              {(selectedProduct.compatibles || selectedProduct.documentos) && (
+                <div className="border-t border-border pt-4 space-y-2">
+                  {selectedProduct.compatibles && selectedProduct.compatibles.length > 0 && (
+                    <p className="text-sm">
+                      <span className="font-bold text-foreground">LANCHAS COMPATIBLES </span>
+                      <span className="text-muted-foreground">{selectedProduct.compatibles.join(", ")}</span>
+                    </p>
+                  )}
+                  {selectedProduct.documentos && selectedProduct.documentos.map((doc, i) => (
+                    <p key={i} className="text-sm">
+                      <span className="font-bold text-foreground">{doc.nombre.toUpperCase()} </span>
+                      <span className="text-destructive font-medium">{doc.archivo}</span>
+                    </p>
+                  ))}
                 </div>
               )}
 
