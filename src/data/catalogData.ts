@@ -203,9 +203,10 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price?: string; // <-- Pon aqui el precio, ej: "$120,000 MXN" o "Cotizar"
+  price?: string;
   features: string[];
   images: string[];
+  specs?: Record<string, string>; // <-- Ficha tecnica: { "Potencia": "300 HP", "Peso": "263 kg" }
 }
 
 export interface ProductCategory {

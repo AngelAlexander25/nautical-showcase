@@ -1,21 +1,35 @@
 import { Anchor, Facebook, Phone, MessageCircle, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
+
+  const handleNav = (path: string, hash?: string) => {
+    if (hash) {
+      navigate("/");
+      setTimeout(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
-    <footer className="bg-navy text-primary-foreground">
+    <footer className="bg-primary text-primary-foreground">
+      {/* Main footer */}
       <div className="container mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid md:grid-cols-3 gap-12">
           {/* Brand */}
-          <div className="lg:col-span-2">
-            <img src={logo} alt="Aqua Servi" className="h-16 mb-6 brightness-0 invert" />
-            <p className="text-primary-foreground/70 mb-6 max-w-md leading-relaxed">
-              Con mas de 30 anos de experiencia, somos tu aliado confiable en el mundo nautico. 
-              Ofrecemos productos de calidad y servicio excepcional.
+          <div>
+            <img src={logo} alt="Aqua Servi" className="h-14 mb-6 brightness-0 invert" />
+            <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-sm">
+              Con mas de 30 anos de experiencia, somos tu aliado confiable en el mundo nautico.
+              Productos de calidad y servicio excepcional.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3 mt-6">
               <a
                 href="https://www.facebook.com/share/1Dks3dEU5K/?mibextid=wwXIfr"
                 target="_blank"
@@ -28,24 +42,24 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Links */}
           <div>
-            <h3 className="font-display font-semibold text-lg mb-6">Enlaces Rapidos</h3>
+            <h3 className="font-display font-semibold text-lg mb-6">Navegacion</h3>
             <ul className="space-y-3">
               {[
-                { label: "Inicio", href: "#inicio" },
-                { label: "Nosotros", href: "#nosotros" },
-                { label: "Catalogo", href: "#catalogo" },
-                { label: "Servicios", href: "#servicios" },
-                { label: "Contacto", href: "#contacto" },
+                { label: "Inicio", path: "/", hash: "inicio" },
+                { label: "Nosotros", path: "/", hash: "nosotros" },
+                { label: "Catalogo", path: "/catalogo" },
+                { label: "Servicios", path: "/", hash: "servicios" },
+                { label: "Contacto", path: "/", hash: "contacto" },
               ].map((item) => (
                 <li key={item.label}>
-                  <a
-                    href={item.href}
-                    className="text-primary-foreground/70 hover:text-secondary transition-colors"
+                  <button
+                    onClick={() => handleNav(item.path, item.hash)}
+                    className="text-primary-foreground/70 hover:text-secondary transition-colors text-sm"
                   >
                     {item.label}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -54,17 +68,17 @@ const Footer = () => {
           {/* Contact */}
           <div>
             <h3 className="font-display font-semibold text-lg mb-6">Contacto</h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-sm">
               <li className="flex items-center gap-3 text-primary-foreground/70">
-                <Phone className="w-4 h-4 text-secondary" />
+                <Phone className="w-4 h-4 text-secondary flex-shrink-0" />
                 <span>(998) 880 0590</span>
               </li>
               <li className="flex items-center gap-3 text-primary-foreground/70">
-                <MessageCircle className="w-4 h-4 text-secondary" />
+                <MessageCircle className="w-4 h-4 text-secondary flex-shrink-0" />
                 <span>(984) 317 5479</span>
               </li>
               <li className="flex items-start gap-3 text-primary-foreground/70">
-                <Clock className="w-4 h-4 text-secondary mt-0.5" />
+                <Clock className="w-4 h-4 text-secondary mt-0.5 flex-shrink-0" />
                 <div>
                   <p>Lun - Vie: 8:00 AM - 5:00 PM</p>
                   <p>Sab: 8:00 AM - 2:00 PM</p>
@@ -75,28 +89,16 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Bottom */}
       <div className="border-t border-primary-foreground/10">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-primary-foreground/60 text-sm text-center md:text-left">
-              {currentYear} Aqua Servi. Todos los derechos reservados.
-            </p>
-            <p className="text-primary-foreground/60 text-sm flex items-center gap-2">
-              <Anchor className="w-4 h-4 text-secondary" />
-              Respaldo - Servicio - Calidad
-            </p>
-          </div>
-          
-          {/* Credits */}
-          <div className="mt-6 pt-4 border-t border-primary-foreground/10 text-center">
-            <p className="text-primary-foreground/50 text-xs">
-              Portafolio creado por <span className="text-secondary font-medium">Angel Alexander</span>
-            </p>
-            <p className="text-primary-foreground/40 text-xs mt-1">
-              * Este es un proyecto ficticio creado con fines demostrativos.
-            </p>
-          </div>
+        <div className="container mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center gap-3">
+          <p className="text-primary-foreground/50 text-xs">
+            {currentYear} Aqua Servi. Todos los derechos reservados.
+          </p>
+          <p className="text-primary-foreground/50 text-xs flex items-center gap-2">
+            <Anchor className="w-3 h-3 text-secondary" />
+            Respaldo - Servicio - Calidad
+          </p>
         </div>
       </div>
     </footer>
