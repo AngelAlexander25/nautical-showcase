@@ -22,7 +22,7 @@ const Hero = () => {
             transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2 mb-8"
           >
-            <span className="text-white/90 font-medium text-sm tracking-wide">30 Anos de Experiencia</span>
+            <span className="text-white/90 font-medium text-sm tracking-wide">30 Años de Experiencia</span>
           </motion.div>
 
           <motion.h1

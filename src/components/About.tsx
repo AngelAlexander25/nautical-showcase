@@ -5,7 +5,7 @@ import AnimatedSection, { SlideInLeft, SlideInRight, StaggerContainer, StaggerIt
 const features = [
   {
     icon: Award,
-    title: "30 Anos de Experiencia",
+    title: "30 Años de Experiencia",
     description: "Tres decadas siendo lideres en el mercado nautico mexicano.",
   },
   {
@@ -43,7 +43,7 @@ const About = () => {
               </div>
               <div className="absolute -bottom-8 -right-8 bg-card p-6 rounded-xl shadow-xl border border-border hidden md:block">
                 <div className="text-4xl font-display font-bold text-primary">30+</div>
-                <div className="text-muted-foreground">Anos de experiencia</div>
+                <div className="text-muted-foreground">Años de experiencia</div>
               </div>
             </div>
           </SlideInLeft>

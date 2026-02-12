@@ -11,7 +11,7 @@ const team = [
   {
     name: "Carlos Mendoza",
     role: "Tecnico en Motores Fuera de Borda",
-    description: "15 anos de experiencia en reparacion y mantenimiento de motores Yamaha. Certificado por la marca.",
+    description: "15 años de experiencia en reparacion y mantenimiento de motores Yamaha. Certificado por la marca.",
     initials: "CM",
   },
   {
