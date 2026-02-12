@@ -1,26 +1,19 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import boatDeck from "@/assets/boat-deck.png";
 
 const Hero = () => {
-  const handleScroll = () => {
-    document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const navigate = useNavigate();
 
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
       <div className="absolute inset-0">
-        <img
-          src={boatDeck}
-          alt="Marine background"
-          className="w-full h-full object-cover"
-        />
+        <img src={boatDeck} alt="Marine background" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-hero-overlay" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -56,22 +49,13 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.45 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Button
-              onClick={handleScroll}
+              onClick={() => navigate("/catalogo")}
               size="lg"
-              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold px-8 py-6 text-lg"
+              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold px-10 py-6 text-lg"
             >
               Ver Catalogo
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-white/40 text-white hover:bg-white/10 px-8 py-6 text-lg"
-              onClick={() => document.getElementById("contacto")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              Solicitar Cotizacion
             </Button>
           </motion.div>
         </div>
@@ -84,9 +68,9 @@ const Hero = () => {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
       >
         <button
-          onClick={handleScroll}
+          onClick={() => document.getElementById("nosotros")?.scrollIntoView({ behavior: "smooth" })}
           className="text-white/60 hover:text-white transition-colors"
-          aria-label="Scroll to catalog"
+          aria-label="Scroll down"
         >
           <ChevronDown className="w-10 h-10" />
         </button>

@@ -36,31 +36,29 @@ const services = [
 
 const Services = () => {
   return (
-    <section id="servicios" className="py-24 bg-ocean-gradient text-primary-foreground">
+    <section id="servicios" className="py-24 bg-background">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <AnimatedSection className="text-center mb-16">
           <span className="text-secondary font-semibold uppercase tracking-wider text-sm">
             Lo que Ofrecemos
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold mt-2 mb-4">
-            Nuestros <span className="text-secondary">Servicios</span>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-primary mt-2 mb-4">
+            Nuestros Servicios
           </h2>
-          <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Mas que vender productos, te ofrecemos una experiencia completa con servicios de primera clase.
           </p>
         </AnimatedSection>
 
-        {/* Services Grid */}
         <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <StaggerItem key={index}>
-              <div className="group p-8 rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 hover:bg-primary-foreground/10 transition-all duration-300 h-full">
-                <div className="w-14 h-14 rounded-xl bg-secondary/20 flex items-center justify-center mb-6 group-hover:bg-secondary/30 transition-colors">
+              <div className="group p-8 rounded-2xl bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-all duration-300 h-full">
+                <div className="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center mb-6 group-hover:bg-secondary/20 transition-colors">
                   <service.icon className="w-7 h-7 text-secondary" />
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3">{service.title}</h3>
-                <p className="text-primary-foreground/70 leading-relaxed">{service.description}</p>
+                <h3 className="font-display text-xl font-semibold text-primary mb-3">{service.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{service.description}</p>
               </div>
             </StaggerItem>
           ))}
