@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import AnimatedSection, { StaggerContainer } from "./AnimatedSection";
-import { productLines, type Product, type ProductLine } from "@/data/catalogData";
+import { useCatalog } from "@/contexts/CatalogContext";
+import type { Product, ProductLine } from "@/data/catalogData";
 
 const Catalog = () => {
+  const { productLines } = useCatalog();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [expandedLine, setExpandedLine] = useState<string | null>(null);

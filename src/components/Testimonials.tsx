@@ -12,19 +12,19 @@ const testimonials = [
   {
     name: "Roberto Mendez",
     role: "Pescador Profesional",
-    content: "Excelente servicio y productos de primera calidad. Mi motor Yamaha ha funcionado perfectamente durante 5 anos gracias al mantenimiento que me dan.",
+    content: "Excelente servicio y productos de primera calidad. Mi motor Yamaha ha funcionado perfectamente durante 5 años gracias al mantenimiento que me dan.",
     rating: 5,
   },
   {
     name: "Maria Garcia",
     role: "Propietaria de Yate",
-    content: "La asesoria que recibi fue excepcional. Me ayudaron a elegir la lancha perfecta para mi familia. Totalmente recomendados.",
+    content: "La asesoría que recibí fue excepcional. Me ayudaron a elegir la lancha perfecta para mi familia. Totalmente recomendados.",
     rating: 5,
   },
   {
     name: "Carlos Hernandez",
     role: "Operador Turistico",
-    content: "Llevo anos trabajando con ellos y nunca me han fallado. El soporte tecnico es rapido y profesional.",
+    content: "Llevo años trabajando con ellos y nunca me han fallado. El soporte técnico es rápido y profesional.",
     rating: 5,
   },
   {

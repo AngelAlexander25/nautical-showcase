@@ -26,7 +26,7 @@ const Footer = () => {
           <div>
             <img src={logo} alt="Aqua Servi" className="h-14 mb-6 brightness-0 invert" />
             <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-sm">
-              Con mas de 30 anos de experiencia, somos tu aliado confiable en el mundo nautico.
+              Con mas de 30 años de experiencia, somos tu aliado confiable en el mundo nautico.
               Productos de calidad y servicio excepcional.
             </p>
             <div className="flex gap-3 mt-6">

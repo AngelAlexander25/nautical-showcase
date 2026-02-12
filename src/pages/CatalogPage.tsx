@@ -8,10 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { productLines, type Product, type ProductVariant } from "@/data/catalogData";
+import { useCatalog } from "@/contexts/CatalogContext";
+import type { Product, ProductVariant } from "@/data/catalogData";
 
 const CatalogPage = () => {
   const navigate = useNavigate();
+  const { productLines } = useCatalog();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeLineId, setActiveLineId] = useState(productLines[0]?.id || "");
