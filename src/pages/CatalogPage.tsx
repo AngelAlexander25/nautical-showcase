@@ -1,99 +1,173 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Anchor, Waves, Droplets } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useCatalog } from "@/contexts/CatalogContext";
 
-// Line accent colors
-const lineAccents: Record<string, string> = {
-  productiva: "from-primary to-primary/80",
-  deportiva: "from-secondary to-secondary/80",
-  lubricantes: "from-primary to-primary/80",
-  fuerza: "from-primary to-primary/80",
+const lineConfig: Record<
+  string,
+  { icon: React.ComponentType<{ className?: string }>; color: string; bg: string; description: string }
+> = {
+  productiva: {
+    icon: Anchor,
+    color: "text-primary",
+    bg: "bg-primary",
+    description:
+      "Lanchas de fibra de vidrio y motores fuera de borda Yamaha para trabajo y aventura.",
+  },
+  deportiva: {
+    icon: Waves,
+    color: "text-secondary",
+    bg: "bg-secondary",
+    description:
+      "Motos acuáticas WaveRunner y remolques. La máxima emoción sobre el agua.",
+  },
+  lubricantes: {
+    icon: Droplets,
+    color: "text-primary",
+    bg: "bg-primary",
+    description:
+      "Aceites Yamalube certificados para motores marinos de 2 y 4 tiempos.",
+  },
 };
 
 const CatalogPage = () => {
   const navigate = useNavigate();
   const { productLines } = useCatalog();
 
-  // Only show the 3 main lines (exclude fuerza if empty)
   const visibleLines = productLines.filter(
-    (l) => l.id !== "fuerza" || l.categories.some((c) => c.products.some((p) => p.images.length > 0))
+    (l) =>
+      l.id !== "fuerza" ||
+      l.categories.some((c) => c.products.some((p) => p.images.length > 0))
   );
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
       <main className="pt-24 pb-20">
-        <div className="container mx-auto px-4">
-          {/* Header */}
-          <div className="text-center mb-16 pt-8">
-            <span className="text-secondary font-semibold uppercase tracking-widest text-xs">
+
+        {/* Hero header */}
+        <div className="relative overflow-hidden bg-primary py-16 mb-16">
+          {/* Giant watermark */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+            <span className="font-display font-black text-[16vw] text-white/5 uppercase tracking-widest whitespace-nowrap">
+              CATÁLOGO
+            </span>
+          </div>
+          <div className="relative z-10 text-center px-4">
+            <span className="text-secondary font-bold uppercase tracking-widest text-xs block mb-2">
               Nuestros Productos
             </span>
-            <h1 className="font-display text-4xl md:text-6xl font-black text-primary mt-2 uppercase">
+            <h1 className="font-display text-5xl md:text-7xl font-black text-white uppercase tracking-tight">
               Catálogo
             </h1>
-            <p className="text-muted-foreground text-lg mt-4 max-w-xl mx-auto">
+            <p className="text-white/70 text-base mt-4 max-w-lg mx-auto">
               Selecciona una línea de productos para explorar nuestra colección completa.
             </p>
           </div>
+        </div>
 
-          {/* Line cards */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        {/* Line cards */}
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {visibleLines.map((line) => {
-              const previewImg = line.categories
-                .flatMap((c) => c.products)
-                .find((p) => p.images.length > 0)?.images[0];
+              const cfg = lineConfig[line.id];
+              const Icon = cfg?.icon ?? Anchor;
 
-              const totalProducts = line.categories.reduce(
-                (acc, c) => acc + c.products.length,
-                0
-              );
+              // Pick 3 preview images spread across products
+              const products = line.categories.flatMap((c) => c.products);
+              const withImages = products.filter((p) => p.images.length > 0);
+              const preview = [
+                withImages[0],
+                withImages[Math.floor(withImages.length / 2)],
+                withImages[withImages.length - 1],
+              ].filter(Boolean);
+
+              const totalProducts = products.length;
 
               return (
                 <button
                   key={line.id}
                   onClick={() => navigate(`/catalogo/${line.id}`)}
-                  className="group relative rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-500 text-left bg-white"
+                  className="group relative rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-400 text-left bg-white flex flex-col"
                 >
-                  {/* Image area */}
-                  <div className="aspect-[4/3] bg-gray-50 flex items-center justify-center overflow-hidden relative">
-                    {previewImg ? (
-                      <img
-                        src={previewImg}
-                        alt={line.title}
-                        className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-500"
-                      />
+                  {/* Image collage area */}
+                  <div className="relative h-52 bg-gray-50 overflow-hidden flex items-center justify-around px-4">
+                    {preview.length > 0 ? (
+                      preview.map((p, i) => (
+                        <div
+                          key={p.id}
+                          className={`transition-all duration-500 group-hover:scale-105 ${
+                            i === 1
+                              ? "z-20 scale-110"
+                              : "z-10 scale-90 opacity-80"
+                          }`}
+                          style={{ transitionDelay: `${i * 60}ms` }}
+                        >
+                          <img
+                            src={p.images[0]}
+                            alt={p.name}
+                            className="h-28 w-28 object-contain drop-shadow-md"
+                          />
+                        </div>
+                      ))
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/5" />
+                      <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                        <Icon className="w-16 h-16 text-primary/20" />
+                      </div>
                     )}
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-all duration-300" />
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-all duration-300" />
                   </div>
 
-                  {/* Bottom info */}
-                  <div className={`bg-gradient-to-r ${lineAccents[line.id] || "from-primary to-primary/80"} p-6`}>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-white/70 text-xs font-semibold uppercase tracking-widest">
+                  {/* Footer bar */}
+                  <div
+                    className={`${cfg?.bg ?? "bg-primary"} p-5 flex items-center justify-between flex-1`}
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon className="w-4 h-4 text-white/70" />
+                        <span className="text-white/60 text-[10px] font-bold uppercase tracking-widest">
                           {line.subtitle}
-                        </p>
-                        <h2 className="font-display text-xl font-black text-white mt-1 uppercase">
-                          {line.title}
-                        </h2>
-                        <p className="text-white/70 text-xs mt-1">
-                          {totalProducts} producto{totalProducts !== 1 ? "s" : ""}
-                          {line.categories.length > 1 && ` · ${line.categories.length} categorías`}
-                        </p>
+                        </span>
                       </div>
-                      <ArrowRight className="w-6 h-6 text-white/80 group-hover:translate-x-1 transition-transform mt-1" />
+                      <h2 className="font-display text-xl font-black text-white uppercase leading-tight">
+                        {line.title.replace("Linea ", "").replace("Línea ", "")}
+                      </h2>
+                      <p className="text-white/60 text-xs mt-1 leading-snug max-w-[180px]">
+                        {cfg?.description}
+                      </p>
+                      <span className="inline-block mt-2 text-white/50 text-[10px] font-semibold">
+                        {totalProducts} productos
+                        {line.categories.length > 1 &&
+                          ` · ${line.categories.length} categorías`}
+                      </span>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-white/20 group-hover:bg-white/30 flex items-center justify-center transition-all group-hover:translate-x-1">
+                        <ArrowRight className="w-5 h-5 text-white" />
+                      </div>
                     </div>
                   </div>
                 </button>
               );
             })}
+          </div>
+
+          {/* Bottom strip */}
+          <div className="mt-16 text-center">
+            <p className="text-muted-foreground text-sm">
+              ¿No encontrás lo que buscas?{" "}
+              <a
+                href="https://wa.me/529843175479"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary font-semibold hover:underline"
+              >
+                Contáctanos por WhatsApp
+              </a>
+            </p>
           </div>
         </div>
       </main>
