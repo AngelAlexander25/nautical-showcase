@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import boatDeck from "@/assets/boat-deck.png";
+import boatDeck from "@/assets/fondo.mp4";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const Hero = () => {
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
-        <img src={boatDeck} alt="Marine background" className="w-full h-full object-cover" />
+        <video src={boatDeck} autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-hero-overlay" />
       </div>
 

@@ -10,8 +10,80 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { useCatalog } from '@/contexts/CatalogContext';
 import type { Product, ProductLine } from '@/data/catalogData';
-import { AlertCircle, Edit2, LogOut, Plus, Save, Trash2 } from 'lucide-react';
+import { AlertCircle, Edit2, LogOut, Plus, Save, Trash2, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+
+// Templates de fichas técnicas según tipo de producto
+const SPEC_TEMPLATES = {
+  motor: {
+    "Ficha Técnica": "",
+    "Potencia": "",
+    "Tipo": "",
+    "Cilindros": "",
+    "Cilindrada": "",
+    "Relación de compresión": "",
+    "Sistema de combustible": "",
+    "Sistema de arranque": "",
+    "Sistema de carga": "",
+    "Control": "",
+    "Peso": "",
+    "Altura de popa": ""
+  },
+  lancha: {
+    "SKU": "",
+    "Peso": "",
+    "Dimensiones": "",
+    "Carga Máxima": ""
+  },
+  motoAcuatica: {
+    "SKU": "",
+    "Peso": "",
+    "Dimensiones": "",
+    "Pet Name": "",
+    "Motor YAMAHA": "",
+    "Inyección de aire": "",
+    "Cilindrada": "",
+    "Sistema de combustible": "",
+    "Casco": "",
+    "Reversa": "",
+    "Capacidad de Combustible": "",
+    "Capacidad de Aceite": "",
+    "Almacenamiento": "",
+    "Pasajeros": "",
+    "Sistema de audio": ""
+  },
+  remolque: {
+    "SKU": "",
+    "Peso": "",
+    "Eslora": "",
+    "Manga": "",
+    "Puntal": "",
+    "Espejo": "",
+    "Capacidad Máxima de Carga": ""
+  },
+  lubricante: {
+    "SKU": "",
+    "Peso": "",
+    "Dimensiones": "",
+    "Precauciones": ""
+  }
+};
+
+// Función para detectar tipo de producto
+const getProductType = (lineId: string, categoryName: string): keyof typeof SPEC_TEMPLATES => {
+  if (categoryName.toLowerCase().includes('motor')) return 'motor';
+  if (categoryName.toLowerCase().includes('lancha')) return 'lancha';
+  if (categoryName.toLowerCase().includes('moto') || categoryName.toLowerCase().includes('aquamoto')) return 'motoAcuatica';
+  if (categoryName.toLowerCase().includes('remolque')) return 'remolque';
+  if (lineId === 'lubricantes') return 'lubricante';
+  
+  // Default basado en línea
+  if (lineId === 'productiva' || lineId === 'deportiva') {
+    return 'lancha';
+  }
+  
+  return 'motor';
+};
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -19,6 +91,10 @@ export default function AdminDashboard() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [productType, setProductType] = useState<keyof typeof SPEC_TEMPLATES>('motor');
+  const [newSpecs, setNewSpecs] = useState<Array<{ key: string; value: string }>>([
+    { key: '', value: '' }
+  ]);
 
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
@@ -33,19 +109,37 @@ export default function AdminDashboard() {
   };
 
   const handleSelectProduct = (lineId: string, categoryId: string, product: Product) => {
-    setSelectedProduct({ ...product, _lineId: lineId, _categoryId: categoryId } as any);
+    const category = data.find(l => l.id === lineId)?.categories.find(c => c.id === categoryId);
+    const detectedType = getProductType(lineId, category?.name || '');
+    setProductType(detectedType);
+    
+    // Si el producto no tiene specs, inicializar con el template
+    const productWithSpecs = {
+      ...product,
+      _lineId: lineId,
+      _categoryId: categoryId,
+      specs: product.specs || { ...SPEC_TEMPLATES[detectedType] }
+    };
+    
+    setSelectedProduct(productWithSpecs);
     setEditMode(true);
+    
+    // Resetear los campos de nuevas especificaciones
+    setNewSpecs([{ key: '', value: '' }]);
   };
 
   const handleSaveProduct = () => {
     if (!selectedProduct) return;
 
+    const lineId = (selectedProduct as Product & { _lineId?: string })._lineId;
+    const categoryId = (selectedProduct as Product & { _categoryId?: string })._categoryId;
+
     const newData = data.map(line => {
-      if (line.id === (selectedProduct as any)._lineId) {
+      if (line.id === lineId) {
         return {
           ...line,
           categories: line.categories.map(cat => {
-            if (cat.id === (selectedProduct as any)._categoryId) {
+            if (cat.id === categoryId) {
               return {
                 ...cat,
                 products: cat.products.map(p =>
@@ -66,7 +160,7 @@ export default function AdminDashboard() {
     setEditMode(false);
   };
 
-  const handleUpdateField = (field: string, value: any) => {
+  const handleUpdateField = (field: string, value: string | string[] | Record<string, string> | undefined) => {
     if (!selectedProduct) return;
     setSelectedProduct({ ...selectedProduct, [field]: value });
   };
@@ -88,6 +182,57 @@ export default function AdminDashboard() {
     if (!selectedProduct || !selectedProduct.variantes) return;
     const newVariants = selectedProduct.variantes.filter((_, i) => i !== index);
     setSelectedProduct({ ...selectedProduct, variantes: newVariants });
+  };
+
+  const handleAddSpec = () => {
+    if (!selectedProduct) return;
+    
+    // Filtrar solo los specs que tengan clave definida
+    const validSpecs = newSpecs.filter(spec => spec.key.trim() !== '');
+    
+    if (validSpecs.length === 0) return;
+    
+    // Agregar todos los nuevos specs al producto
+    const updatedSpecs = { ...selectedProduct.specs };
+    validSpecs.forEach(spec => {
+      updatedSpecs[spec.key] = spec.value;
+    });
+    
+    setSelectedProduct({ ...selectedProduct, specs: updatedSpecs });
+    
+    // Resetear los campos
+    setNewSpecs([{ key: '', value: '' }]);
+  };
+
+  const handleAddNewSpecField = () => {
+    setNewSpecs([...newSpecs, { key: '', value: '' }]);
+  };
+
+  const handleUpdateNewSpec = (index: number, field: 'key' | 'value', value: string) => {
+    const updated = [...newSpecs];
+    updated[index][field] = value;
+    setNewSpecs(updated);
+  };
+
+  const handleRemoveNewSpecField = (index: number) => {
+    if (newSpecs.length === 1) {
+      setNewSpecs([{ key: '', value: '' }]);
+    } else {
+      setNewSpecs(newSpecs.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleDeleteSpec = (key: string) => {
+    if (!selectedProduct) return;
+    const newSpecs = { ...selectedProduct.specs };
+    delete newSpecs[key];
+    setSelectedProduct({ ...selectedProduct, specs: newSpecs });
+  };
+
+  const handleLoadTemplate = () => {
+    if (!selectedProduct) return;
+    const template = SPEC_TEMPLATES[productType];
+    setSelectedProduct({ ...selectedProduct, specs: { ...template } });
   };
 
   return (
@@ -291,22 +436,91 @@ export default function AdminDashboard() {
 
                       {/* Especificaciones técnicas */}
                       <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Especificaciones Técnicas</h3>
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold text-lg">Especificaciones Técnicas</h3>
+                          <Button onClick={handleLoadTemplate} variant="outline" size="sm">
+                            Cargar Template {productType === 'motor' ? 'Motor' : 
+                                           productType === 'lancha' ? 'Lancha' : 
+                                           productType === 'motoAcuatica' ? 'Moto Acuática' :
+                                           productType === 'remolque' ? 'Remolque' : 'Lubricante'}
+                          </Button>
+                        </div>
                         
                         <div className="grid grid-cols-2 gap-4">
                           {Object.entries(selectedProduct.specs || {}).map(([key, value]) => (
-                            <div key={key}>
+                            <div key={key} className="relative">
                               <Label className="text-xs">{key}</Label>
-                              <Input
-                                value={value}
-                                onChange={(e) => {
-                                  const newSpecs = { ...selectedProduct.specs, [key]: e.target.value };
-                                  handleUpdateField('specs', newSpecs);
-                                }}
-                              />
+                              <div className="flex gap-2">
+                                <Input
+                                  value={value}
+                                  onChange={(e) => {
+                                    const newSpecs = { ...selectedProduct.specs, [key]: e.target.value };
+                                    handleUpdateField('specs', newSpecs);
+                                  }}
+                                />
+                                <Button
+                                  onClick={() => handleDeleteSpec(key)}
+                                  variant="ghost"
+                                  size="icon"
+                                  className="text-red-500 flex-shrink-0"
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              </div>
                             </div>
                           ))}
                         </div>
+
+                        {/* Agregar nuevos campos de especificación */}
+                        <Card className="p-4 bg-gray-50">
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <Label className="text-sm font-semibold">Agregar Nuevas Especificaciones</Label>
+                              <Button onClick={handleAddNewSpecField} variant="outline" size="sm">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Agregar Campo
+                              </Button>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              {newSpecs.map((spec, index) => (
+                                <div key={index} className="flex gap-2 items-start">
+                                  <div className="flex-1">
+                                    <Input
+                                      placeholder="Nombre del campo (ej: Potencia)"
+                                      value={spec.key}
+                                      onChange={(e) => handleUpdateNewSpec(index, 'key', e.target.value)}
+                                    />
+                                  </div>
+                                  <div className="flex-1">
+                                    <Input
+                                      placeholder="Valor (ej: 300 HP)"
+                                      value={spec.value}
+                                      onChange={(e) => handleUpdateNewSpec(index, 'value', e.target.value)}
+                                    />
+                                  </div>
+                                  <Button
+                                    onClick={() => handleRemoveNewSpecField(index)}
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-red-500 flex-shrink-0"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                            
+                            <Button 
+                              onClick={handleAddSpec} 
+                              className="w-full"
+                              disabled={!newSpecs.some(spec => spec.key.trim() !== '')}
+                            >
+                              <Save className="w-4 h-4 mr-2" />
+                              Guardar {newSpecs.filter(s => s.key.trim()).length} Especificación(es)
+                            </Button>
+                          </div>
+                        </Card>
                       </div>
                     </div>
                   </ScrollArea>
