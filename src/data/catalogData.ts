@@ -149,6 +149,31 @@ import F2_5BMHS from "@/assets/linea productiva/Motores/F-2.5BMHS.jpg";
 import A200AETX_1 from "@/assets/linea productiva/Motores/18_200AETX.jpg";
 import A200AETX_2 from "@/assets/linea productiva/Motores/18_200AETX(2).jpg";
 
+// === LINEA DEPORTIVA - MOTOS ACUATICAS ===
+import VX_1 from "@/assets/linea deportiva/Motos/2026-VX.png";
+import VX_2 from "@/assets/linea deportiva/Motos/2026-VX(2).png";
+import VX_3 from "@/assets/linea deportiva/Motos/2026-VX(3).png";
+
+import VX1050GB_1 from "@/assets/linea deportiva/Motos/VX1050G-B.jpg";
+import VX1050GB_2 from "@/assets/linea deportiva/Motos/VX1050G-B(2).jpg";
+import VX1050GB_3 from "@/assets/linea deportiva/Motos/VX1050G-B(3).jpg";
+import VX1050GB_4 from "@/assets/linea deportiva/Motos/VX1050G-B(4).jpg";
+import VX1050GB_5 from "@/assets/linea deportiva/Motos/VX1050G-B(5).jpg";
+
+import VXCruiserHO_1 from "@/assets/linea deportiva/Motos/VX-CRUISER-HO-WAud-2026.png";
+import VXCruiserHO_2 from "@/assets/linea deportiva/Motos/VX-CRUISER-HO-WAud-2026(2).png";
+import VXCruiserHO_3 from "@/assets/linea deportiva/Motos/VX-CRUISER-HO-WAud-2026(3).png";
+
+import FXCruiserHO_1 from "@/assets/linea deportiva/Motos/FX-Cruiser-HO.jpg";
+import FXCruiserHO_2 from "@/assets/linea deportiva/Motos/FX-Cruiser-HO(2).jpg";
+import FXCruiserHO_3 from "@/assets/linea deportiva/Motos/FX-Cruiser-HO(3).jpg";
+import FXCruiserHO_4 from "@/assets/linea deportiva/Motos/FX-Cruiser-HO(4).jpg";
+
+import FXCruiserSVHO_1 from "@/assets/linea deportiva/Motos/FX-CRUISER-SVHO.jpg";
+import FXCruiserSVHO_2 from "@/assets/linea deportiva/Motos/FX-CRUISER-SVHO(2).jpg";
+import FXCruiserSVHO_3 from "@/assets/linea deportiva/Motos/FX-CRUISER-SVHO(3).jpg";
+import FXCruiserSVHO_4 from "@/assets/linea deportiva/Motos/FX-CRUISER-SVHO(4).jpg";
+
 // === LINEA DEPORTIVA - REMOLQUES ===
 import C2270_1 from "@/assets/linea deportiva/Remolques/C2270.jpg";
 import C2270_2 from "@/assets/linea deportiva/Remolques/C2270(2).jpg";
@@ -848,8 +873,54 @@ export const productLines: ProductLine[] = [
   {
     id: "deportiva",
     title: "Linea Deportiva",
-    subtitle: "Remolques para embarcaciones",
+    subtitle: "Aquamotos y Remolques para embarcaciones",
     categories: [
+      {
+        id: "aquamotos",
+        name: "Motos Acuaticas",
+        products: [
+          {
+            id: "aq-vx2026",
+            name: "VX 2026",
+            description: "Moto acuatica VX 2026. Ideal para principiantes y aventureros. Potente y facil de manejar.",
+            tipo: "Moto Acuatica",
+            features: ["1050cc", "VX Series", "2026"],
+            images: [VX_1, VX_2, VX_3],
+          },
+          {
+            id: "aq-vx1050gb",
+            name: "VX1050G-B",
+            description: "Moto acuatica con motor de 1050cc. Potencia y agilidad para la aventura acuatica.",
+            tipo: "Moto Acuatica",
+            features: ["1050cc", "VX Series", "Gran potencia"],
+            images: [VX1050GB_1, VX1050GB_2, VX1050GB_3, VX1050GB_4, VX1050GB_5],
+          },
+          {
+            id: "aq-vxcruiserho",
+            name: "VX Cruiser HO 2026",
+            description: "Moto acuatica VX Cruiser HO. Confort y rendimiento excepcional con audio Bluetooth integrado.",
+            tipo: "Moto Acuatica",
+            features: ["High Output", "Cruiser", "Bluetooth Audio", "2026"],
+            images: [VXCruiserHO_1, VXCruiserHO_2, VXCruiserHO_3],
+          },
+          {
+            id: "aq-fxcruiserho",
+            name: "FX Cruiser HO",
+            description: "Moto acuatica de alto rendimiento FX Cruiser HO. Para usuarios experimentados que buscan maxima potencia.",
+            tipo: "Moto Acuatica",
+            features: ["High Output", "FX Series", "Alto rendimiento"],
+            images: [FXCruiserHO_1, FXCruiserHO_2, FXCruiserHO_3, FXCruiserHO_4],
+          },
+          {
+            id: "aq-fxcruisersvho",
+            name: "FX Cruiser SVHO",
+            description: "La cima de la linea deportiva. Motor SVHO de maxima potencia para los mas exigentes.",
+            tipo: "Moto Acuatica",
+            features: ["Super Vortex HO", "FX Series", "Maxima potencia"],
+            images: [FXCruiserSVHO_1, FXCruiserSVHO_2, FXCruiserSVHO_3, FXCruiserSVHO_4],
+          },
+        ],
+      },
       {
         id: "remolques",
         name: "Remolques",
