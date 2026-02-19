@@ -12,30 +12,54 @@ import { useCatalog } from '@/contexts/CatalogContext';
 import type { Product, ProductLine } from '@/data/catalogData';
 import { AlertCircle, Edit2, LogOut, Plus, Save, Trash2, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { TemplateReferenceDialog } from '@/components/TemplateReferenceDialog';
 
 // Templates de fichas técnicas según tipo de producto
 const SPEC_TEMPLATES = {
-  motor: {
-    "Ficha Técnica": "",
-    "Potencia": "",
-    "Tipo": "",
-    "Cilindros": "",
-    "Cilindrada": "",
-    "Relación de compresión": "",
-    "Sistema de combustible": "",
-    "Sistema de arranque": "",
-    "Sistema de carga": "",
-    "Control": "",
-    "Peso": "",
-    "Altura de popa": ""
-  },
   lancha: {
+    "Información adicional": "",
+    "SKU": "",
+    "Peso": "",
+    "Eslora": "",
+    "Manga": "",
+    "Puntal": "",
+    "Espejo 1": "",
+    "Capacidad Máxima de Carga": ""
+  },
+  motor: {
+    "Información adicional": "",
+    "SKU": "",
+    "Dimensiones": "",
+    "Peso": "",
+    "Uso": "",
+    "Ficha Técnica": "",
+    "Transmisión": "",
+    "Tipo de motor": "",
+    "Cilindrada": "",
+    "Potencia Máxima": "",
+    "Revoluciones Máximas por Minuto": "",
+    "Sistema de Combustible": "",
+    "Consumo de Combustible": "",
+    "Tanque de Combustible": "",
+    "Aceite Lubricante": "",
+    "Capacidad del depósito de Aceite (Motor)": "",
+    "Capacidad del depósito de Aceite (Transmisión)": "",
+    "Sistema de Encendido": "",
+    "Sistema de Arranque": "",
+    "Sistema de Dirección": "",
+    "Sistema de Inclinación": "",
+    "Sistema de Escape": "",
+    "Altura de Transmisión o Pata": ""
+  },
+  aceite: {
+    "Información adicional": "",
     "SKU": "",
     "Peso": "",
     "Dimensiones": "",
-    "Carga Máxima": ""
+    "Precauciones": ""
   },
   motoAcuatica: {
+    "Información adicional": "",
     "SKU": "",
     "Peso": "",
     "Dimensiones": "",
@@ -43,29 +67,24 @@ const SPEC_TEMPLATES = {
     "Motor YAMAHA": "",
     "Inyección de aire": "",
     "Cilindrada": "",
-    "Sistema de combustible": "",
     "Casco": "",
     "Reversa": "",
     "Capacidad de Combustible": "",
     "Capacidad de Aceite": "",
     "Almacenamiento": "",
     "Pasajeros": "",
+    "Color": "",
     "Sistema de audio": ""
   },
   remolque: {
+    "Información adicional": "",
     "SKU": "",
     "Peso": "",
     "Eslora": "",
     "Manga": "",
     "Puntal": "",
-    "Espejo": "",
+    "Espejo 1": "",
     "Capacidad Máxima de Carga": ""
-  },
-  lubricante: {
-    "SKU": "",
-    "Peso": "",
-    "Dimensiones": "",
-    "Precauciones": ""
   }
 };
 
@@ -73,16 +92,16 @@ const SPEC_TEMPLATES = {
 const getProductType = (lineId: string, categoryName: string): keyof typeof SPEC_TEMPLATES => {
   if (categoryName.toLowerCase().includes('motor')) return 'motor';
   if (categoryName.toLowerCase().includes('lancha')) return 'lancha';
-  if (categoryName.toLowerCase().includes('moto') || categoryName.toLowerCase().includes('aquamoto')) return 'motoAcuatica';
   if (categoryName.toLowerCase().includes('remolque')) return 'remolque';
-  if (lineId === 'lubricantes') return 'lubricante';
+  if (categoryName.toLowerCase().includes('moto') || categoryName.toLowerCase().includes('aquamoto')) return 'motoAcuatica';
+  if (lineId === 'lubricantes' || categoryName.toLowerCase().includes('aceite')) return 'aceite';
   
   // Default basado en línea
-  if (lineId === 'productiva' || lineId === 'deportiva') {
-    return 'lancha';
-  }
+  if (lineId === 'productiva') return 'lancha';
+  if (lineId === 'deportiva') return 'motoAcuatica';
+  if (lineId === 'fuerza') return 'motor';
   
-  return 'motor';
+  return 'lancha';
 };
 
 export default function AdminDashboard() {
@@ -438,12 +457,15 @@ export default function AdminDashboard() {
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <h3 className="font-semibold text-lg">Especificaciones Técnicas</h3>
-                          <Button onClick={handleLoadTemplate} variant="outline" size="sm">
-                            Cargar Template {productType === 'motor' ? 'Motor' : 
-                                           productType === 'lancha' ? 'Lancha' : 
-                                           productType === 'motoAcuatica' ? 'Moto Acuática' :
-                                           productType === 'remolque' ? 'Remolque' : 'Lubricante'}
-                          </Button>
+                          <div className="flex gap-2">
+                            <TemplateReferenceDialog />
+                            <Button onClick={handleLoadTemplate} variant="outline" size="sm">
+                              Cargar Template {productType === 'motor' ? 'Motor' : 
+                                             productType === 'lancha' ? 'Lancha' : 
+                                             productType === 'motoAcuatica' ? 'Moto Acuática' :
+                                             productType === 'remolque' ? 'Remolque' : 'Aceite'}
+                            </Button>
+                          </div>
                         </div>
                         
                         <div className="grid grid-cols-2 gap-4">
