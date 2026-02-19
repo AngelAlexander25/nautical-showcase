@@ -17,7 +17,7 @@ const catalogSlides = [
   {
     id: "deportiva",
     title: "Linea Deportiva",
-    subtitle: "Motos Acuaticas y Remolques",
+    subtitle: "Motos Acuáticas y Remolques",
     image: motorsHero,
   },
   {
