@@ -138,31 +138,36 @@ const LineaPage = () => {
               <p className="text-muted-foreground text-sm md:text-base mt-3 max-w-xl mx-auto leading-relaxed">
                 {description}
               </p>
+
+              {/* Video if available for the line */}
+              {line.categories.length > 0 && videoMap[line.categories[0].id] && (
+                <div className="relative w-full h-[360px] md:h-[500px] overflow-hidden bg-black rounded-lg mt-8">
+                  <video
+                    src={videoMap[line.categories[0].id]}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
           )}
 
           {/* Video section with title header */}
           {activeCat && (
             <div className="w-full mb-8">
-              <div className="relative text-center mb-6 px-4 py-8">
-                {/* Small red label */}
-                <span className="text-secondary font-bold uppercase tracking-widest text-xs block mb-2">
+              <div className="text-center mb-8 relative z-10 px-4">
+                <span className="text-secondary font-bold uppercase tracking-widest text-xs">
                   {activeCat.name}
                 </span>
-                
-                {/* Large title - SHORT NAME */}
-                <h2 className="font-display text-4xl md:text-6xl font-black text-primary uppercase tracking-tight relative z-20 mb-2">
-                  {getShortName(activeCat.name)}
-                </h2>
-
-                {/* Huge watermark behind - SHORT NAME */}
-                {videoMap[activeCat.id] && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-                    <span className="font-display font-black text-[15vw] text-primary/8 uppercase tracking-widest whitespace-nowrap">
-                      {getShortName(activeCat.name)}
-                    </span>
-                  </div>
-                )}
+                <h1 className="font-display text-4xl md:text-6xl font-black text-primary mt-1 uppercase tracking-tight">
+                  {activeCat.name}
+                </h1>
+                <p className="text-muted-foreground text-sm md:text-base mt-3 max-w-xl mx-auto leading-relaxed">
+                  {description}
+                </p>
               </div>
 
               {/* Video if available */}

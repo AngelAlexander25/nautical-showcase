@@ -214,27 +214,6 @@ import Yamalube2T from "@/assets/linea de lubricantes/botellaYamalube-2t-pleca.p
 import YamalubeTrans from "@/assets/linea de lubricantes/botellasTrans_Yamalube-APISAE80W90-pleca.png";
 import YamalubeCubeta from "@/assets/linea de lubricantes/cubetaYamalube-19L.png";
 
-// === TYPES ===
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  ESTRUCTURA DE PRODUCTO - GUIA RAPIDA                        ║
-// ║                                                               ║
-// ║  ESTE ARCHIVO SE GENERA AUTOMÁTICAMENTE DESDE catalog-data.csv║
-// ║  Para modificar productos, edita catalog-data.csv y ejecuta:  ║
-// ║  npm run update-catalog                                       ║
-// ║                                                               ║
-// ║  name: Nombre del producto                                    ║
-// ║  description: Descripcion corta                               ║
-// ║  tipo: Ej "4 Tiempos", "2 Tiempos", "Fibra de vidrio"       ║
-// ║  variantes: Lista de modelos con precio individual            ║
-// ║    { modelo: "FL300GET2X", precio: "$41,231.04 USD" }        ║
-// ║  notasPrecio: Textos debajo de precios (tipo de cambio, etc) ║
-// ║  compatibles: Lanchas o productos compatibles                 ║
-// ║  documentos: Links a manuales/catálogos de partes             ║
-// ║    { nombre: "Manual Propietario", archivo: "manual.pdf" }   ║
-// ║  specs: Ficha tecnica { "Potencia": "300 HP" }               ║
-// ║  features: Tags cortos ["300 HP", "V6"]                      ║
-// ╚══════════════════════════════════════════════════════════════╝
-
 export interface ProductVariant {
   modelo: string;
   precio: string;
