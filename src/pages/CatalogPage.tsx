@@ -36,6 +36,29 @@ const CatalogPage = () => {
   const navigate = useNavigate();
   const { productLines } = useCatalog();
 
+  const getPreviewProducts = (line: (typeof productLines)[number]) => {
+    const products = line.categories.flatMap((c) => c.products);
+    const withImages = products.filter((p) => p.images.length > 0);
+
+    const uniquePreview: typeof withImages = [];
+    const usedIds = new Set<string>();
+
+    const pushUnique = (product?: (typeof withImages)[number]) => {
+      if (!product || usedIds.has(product.id)) return;
+      usedIds.add(product.id);
+      uniquePreview.push(product);
+    };
+
+    line.categories.forEach((category) => {
+      pushUnique(category.products.find((p) => p.images.length > 0));
+    });
+
+    const fallbackIndexes = [0, Math.floor(withImages.length / 2), withImages.length - 1];
+    fallbackIndexes.forEach((index) => pushUnique(withImages[index]));
+
+    return uniquePreview.slice(0, 3);
+  };
+
   const visibleLines = productLines.filter(
     (l) =>
       l.id !== "fuerza" ||
@@ -49,12 +72,6 @@ const CatalogPage = () => {
 
         {/* Hero header */}
         <div className="relative overflow-hidden bg-primary py-16 mb-16">
-          {/* Giant watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-            <span className="font-display font-black text-[16vw] text-white/5 uppercase tracking-widest whitespace-nowrap">
-              CATÁLOGO
-            </span>
-          </div>
           <div className="relative z-10 text-center px-4">
             <span className="text-secondary font-bold uppercase tracking-widest text-xs block mb-2">
               Nuestros Productos
@@ -75,14 +92,8 @@ const CatalogPage = () => {
               const cfg = lineConfig[line.id];
               const Icon = cfg?.icon ?? Anchor;
 
-              // Pick 3 preview images spread across products
               const products = line.categories.flatMap((c) => c.products);
-              const withImages = products.filter((p) => p.images.length > 0);
-              const preview = [
-                withImages[0],
-                withImages[Math.floor(withImages.length / 2)],
-                withImages[withImages.length - 1],
-              ].filter(Boolean);
+              const preview = getPreviewProducts(line);
 
               const totalProducts = products.length;
 

@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, ChevronLeft, ChevronRight, ArrowLeft, Play } from "lucide-react";
+import { MessageCircle, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useCatalog } from "@/contexts/CatalogContext";
 import type { Product } from "@/data/catalogData";
+
+// Import videos
+import motoresVideo from "@/assets/motores.mp4";
+import motosVideo from "@/assets/motos.mp4";
+import remolquesVideo from "@/assets/remolques.mp4";
+import lubricantesVideo from "@/assets/lubricantes.mp4";
+import lanchaVideo from "@/assets/lancha.mp4";
 
 const lineDescriptions: Record<string, string> = {
   productiva:
@@ -19,88 +26,6 @@ const lineDescriptions: Record<string, string> = {
     "Aceites Yamalube premium certificados para motores marinos de 2 y 4 tiempos. Protección y rendimiento garantizados.",
 };
 
-// ── VIDEO SECTION ──
-const CategoryVideoSection = ({ categoryId, categoryName }: { categoryId: string; categoryName: string }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const videoSrc = categoryVideos[categoryId] ?? fondoVideo;
-
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (playing) {
-      videoRef.current.pause();
-      setPlaying(false);
-    } else {
-      videoRef.current.play();
-      setPlaying(true);
-    }
-  };
-
-  return (
-    <section className="relative w-full bg-foreground overflow-hidden" style={{ height: "420px" }}>
-      <video
-        ref={videoRef}
-        src={videoSrc}
-        className="w-full h-full object-cover opacity-80"
-        loop
-        playsInline
-        onEnded={() => setPlaying(false)}
-      />
-      {/* Overlay gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-
-      {/* Play button */}
-      {!playing && (
-        <button
-          onClick={togglePlay}
-          className="absolute inset-0 flex items-center justify-center group"
-          aria-label="Reproducir video"
-        >
-          <div className="w-20 h-20 rounded-full bg-black/60 border-2 border-white/70 flex items-center justify-center group-hover:bg-black/80 transition-all duration-300 group-hover:scale-110">
-            <Play className="w-8 h-8 text-white ml-1" fill="white" />
-          </div>
-        </button>
-      )}
-
-      {/* Pause button when playing */}
-      {playing && (
-        <button
-          onClick={togglePlay}
-          className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center"
-          aria-label="Pausar video"
-        >
-          <div className="w-20 h-20 rounded-full bg-black/40 border-2 border-white/50 flex items-center justify-center">
-            <div className="flex gap-1.5">
-              <div className="w-2 h-7 bg-white rounded-sm" />
-              <div className="w-2 h-7 bg-white rounded-sm" />
-            </div>
-          </div>
-        </button>
-      )}
-    </section>
-  );
-};
-
-// ── CATEGORY HERO (shown when a category is selected) ──
-const CategoryHero = ({ categoryName, subtitle }: { categoryName: string; subtitle: string }) => (
-  <section className="bg-background py-12 relative overflow-hidden">
-    {/* Giant watermark */}
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-      <span className="font-display font-black text-[15vw] text-muted/30 uppercase tracking-widest whitespace-nowrap">
-        {categoryName}
-      </span>
-    </div>
-    <div className="text-center relative z-10 px-4">
-      <span className="text-secondary font-bold uppercase tracking-widest text-xs">
-        {subtitle}
-      </span>
-      <h1 className="font-display text-5xl md:text-7xl font-black text-primary mt-2 uppercase tracking-tight">
-        {categoryName}
-      </h1>
-    </div>
-  </section>
-);
-
 const LineaPage = () => {
   const { lineaId } = useParams<{ lineaId: string }>();
   const navigate = useNavigate();
@@ -109,6 +34,7 @@ const LineaPage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const didAutoSelectDeportiva = useRef(false);
 
   const line = productLines.find((l) => l.id === lineaId);
   const description = lineDescriptions[lineaId || ""] || "";
@@ -118,28 +44,24 @@ const LineaPage = () => {
     : null;
 
   const allProducts = line?.categories.flatMap((c) => c.products) ?? [];
-  const carouselProducts = (activeCat?.products ?? allProducts).filter(
-    (p) => p.images.length > 0
-  );
-
-  // Shown products in grid
   const displayedProducts = activeCat ? activeCat.products : allProducts;
 
-  // Auto-advance carousel
   useEffect(() => {
-    if (carouselProducts.length <= 1) return;
-    carouselRef.current = setInterval(() => {
-      setCarouselIndex((prev) => (prev + 1) % carouselProducts.length);
-    }, 3000);
-    return () => {
-      if (carouselRef.current) clearInterval(carouselRef.current);
-    };
-  }, [carouselProducts.length, activeCategory]);
+    if (!line || line.id !== "deportiva" || didAutoSelectDeportiva.current) {
+      return;
+    }
 
-  // Reset carousel index when category changes
+    const hasAquamotos = line.categories.some((category) => category.id === "aquamotos");
+    if (hasAquamotos) {
+      setActiveCategory("aquamotos");
+      didAutoSelectDeportiva.current = true;
+    }
+  }, [line]);
+
   useEffect(() => {
-    setCarouselIndex(0);
-  }, [activeCategory]);
+    didAutoSelectDeportiva.current = false;
+    setActiveCategory(null);
+  }, [lineaId]);
 
   const handleWhatsApp = (productName: string) => {
     const message = encodeURIComponent(
@@ -159,6 +81,20 @@ const LineaPage = () => {
     aquamotos: motosVideo,
     remolques: remolquesVideo,
     "lubricantes-productos": lubricantesVideo,
+    lanchas: lanchaVideo,
+  };
+
+  // Short display names for categories
+  const categoryShortNames: Record<string, string> = {
+    "Motores Fuera de Borda": "MOTORES",
+    "Motos Acuaticas": "ACUAMOTOS",
+    "Remolques": "REMOLQUES",
+    "Lubricantes": "LUBRICANTES",
+    "Lanchas": "LANCHAS",
+  };
+
+  const getShortName = (fullName: string): string => {
+    return categoryShortNames[fullName] || fullName.toUpperCase();
   };
 
   if (!line) {
@@ -171,17 +107,6 @@ const LineaPage = () => {
       </div>
     );
   }
-
-  // 3 visible products centered (center one bigger)
-  const visibleCount = 3;
-  const stripProducts =
-    carouselProducts.length > 0
-      ? Array.from({ length: visibleCount }, (_, i) =>
-          carouselProducts[(carouselIndex + i) % carouselProducts.length]
-        )
-      : [];
-
-  const activeCatName = activeCat?.name ?? (line.categories[0]?.name || line.title);
 
   return (
     <div className="min-h-screen bg-white">
@@ -199,188 +124,157 @@ const LineaPage = () => {
           </button>
         </div>
 
-        {/* ── HERO: Descripción + carrusel ── */}
+        {/* ── HERO: Descripción + Video ── */}
         <section className="py-10 bg-white overflow-hidden relative">
-          {/* Giant watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-            <span className="font-display font-black text-[14vw] text-gray-100 uppercase tracking-widest whitespace-nowrap">
-              {activeCatName}
-            </span>
-          </div>
-
-          {/* Subtitle + Title */}
-          <div className="text-center mb-6 relative z-10 px-4">
-            <span className="text-secondary font-bold uppercase tracking-widest text-xs">
-              {activeCatName}
-            </span>
-            <h1 className="font-display text-4xl md:text-6xl font-black text-primary mt-1 uppercase tracking-tight">
-              {line.title.replace("Linea ", "").replace("Línea ", "")}
-            </h1>
-            <p className="text-muted-foreground text-sm md:text-base mt-3 max-w-xl mx-auto leading-relaxed">
-              {description}
-            </p>
-          </div>
-
-          {/* Floating product carousel */}
-          {stripProducts.length > 0 && (
-            <div className="relative z-10 flex justify-center items-end gap-4 md:gap-10 px-4 min-h-[260px]">
-              {stripProducts.map((product, i) => (
-                <button
-                  key={`${product.id}-${i}`}
-                  onClick={() => openProductDetail(product)}
-                  className={`group transition-all duration-500 ${
-                    i === 1
-                      ? "scale-110 -translate-y-6 z-20"
-                      : "scale-90 opacity-70 z-10"
-                  }`}
-                >
-                  <div className="w-32 h-44 md:w-52 md:h-64 flex items-end justify-center">
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="max-w-full max-h-full object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <p
-                    className={`text-xs font-bold text-center mt-2 transition-opacity ${
-                      i === 1
-                        ? "text-primary opacity-100"
-                        : "text-muted-foreground opacity-0 group-hover:opacity-100"
-                    }`}
-                  >
-                    {product.name}
-                  </p>
-                </button>
-              ))}
+          {/* Subtitle + Title (only when no active category) */}
+          {!activeCat && (
+            <div className="text-center mb-8 relative z-10 px-4">
+              <span className="text-secondary font-bold uppercase tracking-widest text-xs">
+                Todos los productos
+              </span>
+              <h1 className="font-display text-4xl md:text-6xl font-black text-primary mt-1 uppercase tracking-tight">
+                {line.title.replace("Linea ", "").replace("Línea ", "")}
+              </h1>
+              <p className="text-muted-foreground text-sm md:text-base mt-3 max-w-xl mx-auto leading-relaxed">
+                {description}
+              </p>
             </div>
           )}
 
-          {/* Carousel dots */}
-          {carouselProducts.length > 1 && (
-            <div className="flex justify-center gap-2 mt-6 relative z-10">
-              {carouselProducts.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCarouselIndex(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    i === carouselIndex
-                      ? "bg-secondary w-6"
-                      : "bg-gray-300 w-2"
-                  }`}
-                />
-              ))}
+          {/* Video section with title header */}
+          {activeCat && (
+            <div className="w-full mb-8">
+              <div className="relative text-center mb-6 px-4 py-8">
+                {/* Small red label */}
+                <span className="text-secondary font-bold uppercase tracking-widest text-xs block mb-2">
+                  {activeCat.name}
+                </span>
+                
+                {/* Large title - SHORT NAME */}
+                <h2 className="font-display text-4xl md:text-6xl font-black text-primary uppercase tracking-tight relative z-20 mb-2">
+                  {getShortName(activeCat.name)}
+                </h2>
+
+                {/* Huge watermark behind - SHORT NAME */}
+                {videoMap[activeCat.id] && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+                    <span className="font-display font-black text-[15vw] text-primary/8 uppercase tracking-widest whitespace-nowrap">
+                      {getShortName(activeCat.name)}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Video if available */}
+              {videoMap[activeCat.id] && (
+                <div className="relative w-full h-[360px] md:h-[500px] overflow-hidden bg-black rounded-lg">
+                  <video
+                    src={videoMap[activeCat.id]}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
           )}
         </section>
 
-            {/* Banner rojo */}
-            <section className="bg-secondary py-10 px-6 md:px-16">
-              <div className="max-w-4xl mx-auto text-center">
-                <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">
-                  {line.subtitle}
-                </p>
-                <h2 className="font-display text-3xl md:text-4xl font-black text-white uppercase leading-tight">
-                  {line.title}
-                </h2>
-                <p className="text-white/80 text-sm mt-3 leading-relaxed max-w-lg mx-auto">
-                  {description}
-                </p>
+        {/* ── BANNER ROJO: Info de línea ── */}
+        <section className="bg-secondary py-10 px-6 md:px-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">
+              {line.subtitle}
+            </p>
+            <h2 className="font-display text-3xl md:text-4xl font-black text-white uppercase leading-tight">
+              {line.title}
+            </h2>
+            <p className="text-white/80 text-sm mt-3 leading-relaxed max-w-lg mx-auto">
+              {description}
+            </p>
+          </div>
+        </section>
+
+        {/* ── CATEGORÍAS: Selector ── */}
+        {line.categories.length > 1 && (
+          <section className="bg-white py-8 border-b border-gray-100">
+            <div className="container mx-auto px-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 text-center">
+                Selecciona una categoría
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <button
+                  onClick={() => setActiveCategory(null)}
+                  className={`px-8 py-3 rounded-full font-bold text-sm border-2 transition-all ${
+                    activeCategory === null
+                      ? "bg-primary text-white border-primary shadow-lg scale-105"
+                      : "bg-white text-primary border-primary/30 hover:border-primary"
+                  }`}
+                >
+                  Todos
+                </button>
+                {line.categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`px-8 py-3 rounded-full font-bold text-sm border-2 transition-all ${
+                      activeCategory === cat.id
+                        ? "bg-primary text-white border-primary shadow-lg scale-105"
+                        : "bg-white text-primary border-primary/30 hover:border-primary"
+                    }`}
+                  >
+                    {cat.name}
+                    <span className="ml-2 text-xs font-normal opacity-70">
+                      ({cat.products.length})
+                    </span>
+                  </button>
+                ))}
               </div>
-            </section>
-
-            {/* Selector de categorías */}
-            {line.categories.length > 1 && (
-              <section className="bg-background py-12 border-b border-border">
-                <div className="container mx-auto px-4 text-center">
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6">
-                    ¿Qué deseas explorar?
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-4">
-                    {line.categories.map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => setActiveCategory(cat.id)}
-                        className="group relative px-10 py-4 rounded-full font-bold text-sm border-2 border-primary/30 bg-white text-primary hover:border-primary hover:shadow-xl transition-all duration-300 hover:scale-105"
-                      >
-                        {cat.name}
-                        <span className="ml-2 text-xs font-normal opacity-60">
-                          ({cat.products.length})
-                        </span>
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-secondary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* Si solo hay 1 categoría, mostrar grid directo */}
-            {line.categories.length === 1 && (
-              <section className="py-14 bg-white">
-                <div className="container mx-auto px-4">
-                  <ProductGrid products={displayedProducts} onSelect={openProductDetail} />
-                </div>
-              </section>
-            )}
-          </>
-        ) : (
-          /* ══════════════════════════════════════════
-              VISTA DE CATEGORÍA SELECCIONADA
-              - Nombre con watermark → Video → Grid
-          ══════════════════════════════════════════ */
-          <>
-            {/* Botón volver a la línea */}
-            <div className="container mx-auto px-4 pt-2 pb-0">
-              <button
-                onClick={() => setActiveCategory(null)}
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="font-medium">Volver a {lineTitleClean}</span>
-              </button>
             </div>
+          </section>
+        )}
 
-            {/* Nombre de categoría con watermark */}
-            <CategoryHero categoryName={activeCat.name} subtitle={line.subtitle} />
-
-            {/* Video de la categoría */}
-            <CategoryVideoSection categoryId={activeCat.id} categoryName={activeCat.name} />
-
-            {/* Selector de otras categorías (si hay más) */}
-            {line.categories.length > 1 && (
-              <div className="bg-background border-b border-border py-4">
-                <div className="container mx-auto px-4 flex flex-wrap justify-center gap-3">
-                  {line.categories.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setActiveCategory(cat.id)}
-                      className={`px-6 py-2.5 rounded-full font-bold text-sm border-2 transition-all ${
-                        activeCat.id === cat.id
-                          ? "bg-primary text-primary-foreground border-primary shadow-md"
-                          : "bg-background text-primary border-primary/30 hover:border-primary"
-                      }`}
-                    >
-                      {cat.name}
-                    </button>
-                  ))}
+        {/* ── GRID DE PRODUCTOS ── */}
+        <section className="py-14 bg-white">
+          <div className="container mx-auto px-4">
+            {/* When showing all: group by category */}
+            {!activeCat ? (
+              line.categories.map((cat) => (
+                <div key={cat.id} className="mb-16">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div>
+                      <h2 className="font-display text-2xl md:text-3xl font-black text-primary uppercase">
+                        {cat.name}
+                      </h2>
+                      <div className="h-1 w-14 bg-secondary mt-2" />
+                    </div>
+                    {line.categories.length > 1 && (
+                      <button
+                        onClick={() => setActiveCategory(cat.id)}
+                        className="ml-auto text-sm text-primary hover:text-secondary font-semibold transition-colors"
+                      >
+                        Ver solo {cat.name} →
+                      </button>
+                    )}
+                  </div>
+                  <ProductGrid products={cat.products} onSelect={openProductDetail} />
                 </div>
-              </div>
-            )}
-
-            {/* Grid de productos */}
-            <section className="py-14 bg-white">
-              <div className="container mx-auto px-4">
+              ))
+            ) : (
+              <>
                 <div className="mb-8">
                   <h2 className="font-display text-2xl md:text-3xl font-black text-primary uppercase">
                     {activeCat.name}
                   </h2>
                   <div className="h-1 w-14 bg-secondary mt-2" />
                 </div>
-                <ProductGrid products={activeCat.products} onSelect={openProductDetail} />
-              </div>
-            </section>
-          </>
-        )}
+                <ProductGrid products={displayedProducts} onSelect={openProductDetail} />
+              </>
+            )}
+          </div>
+        </section>
       </main>
 
       {/* ── MODAL DETALLE ── */}
@@ -458,6 +352,7 @@ const LineaPage = () => {
                 </p>
               )}
 
+              {/* Variantes y precios */}
               {selectedProduct.variantes && selectedProduct.variantes.length > 0 && (
                 <div className="space-y-3 bg-muted/40 rounded-xl p-4">
                   <h4 className="font-bold text-primary text-sm uppercase tracking-wider mb-2">
@@ -519,6 +414,7 @@ const LineaPage = () => {
                 </div>
               )}
 
+              {/* Ficha técnica */}
               {selectedProduct.specs && Object.keys(selectedProduct.specs).length > 0 && (
                 <div>
                   <h3 className="font-display text-lg font-semibold text-primary mb-4 border-b-2 border-secondary pb-2">
@@ -537,6 +433,7 @@ const LineaPage = () => {
                 </div>
               )}
 
+              {/* Compatibles y documentos */}
               {(selectedProduct.compatibles || selectedProduct.documentos) && (
                 <div className="border-t border-border pt-4 space-y-2">
                   {selectedProduct.compatibles && selectedProduct.compatibles.length > 0 && (
@@ -550,7 +447,7 @@ const LineaPage = () => {
                   {selectedProduct.documentos?.map((doc, i) => (
                     <p key={i} className="text-sm">
                       <span className="font-bold text-foreground">
-                        {doc.nombre.toUpperCase()}{" "}
+                        {doc.nombre.toUpperCase()} {" "}
                       </span>
                       <span className="text-secondary font-medium">{doc.archivo}</span>
                     </p>
@@ -560,7 +457,7 @@ const LineaPage = () => {
 
               <Button
                 onClick={() => handleWhatsApp(selectedProduct.name)}
-                className="w-full bg-green-600 hover:bg-green-700 text-primary-foreground gap-2"
+                className="w-full bg-green-500 hover:bg-green-600 text-white gap-2"
                 size="lg"
               >
                 <MessageCircle className="w-5 h-5" />
@@ -590,9 +487,9 @@ const ProductGrid = ({
       <button
         key={product.id}
         onClick={() => onSelect(product)}
-        className="text-left bg-background rounded-xl border border-border hover:border-primary/40 hover:shadow-lg transition-all duration-300 overflow-hidden group"
+        className="text-left bg-white rounded-xl border border-gray-100 hover:border-primary/40 hover:shadow-lg transition-all duration-300 overflow-hidden group"
       >
-        <div className="aspect-square bg-muted/30 flex items-center justify-center overflow-hidden">
+        <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
           {product.images.length > 0 ? (
             <img
               src={product.images[0]}
@@ -603,7 +500,7 @@ const ProductGrid = ({
             <span className="text-muted-foreground text-xs">Sin imagen</span>
           )}
         </div>
-        <div className="px-3 py-2 border-t border-border">
+        <div className="px-3 py-2 border-t border-gray-100">
           {product.tipo && (
             <span className="text-[9px] font-bold text-secondary uppercase tracking-widest block">
               {product.tipo}
