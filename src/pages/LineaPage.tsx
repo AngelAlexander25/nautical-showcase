@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,12 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useCatalog } from "@/contexts/CatalogContext";
 import type { Product } from "@/data/catalogData";
+
+// Import videos
+import motoresVideo from "@/assets/motores.mp4";
+import motosVideo from "@/assets/motos.mp4";
+import remolquesVideo from "@/assets/remolques.mp4";
+import lubricantesVideo from "@/assets/lubricantes.mp4";
 
 const lineDescriptions: Record<string, string> = {
   productiva:
@@ -27,40 +33,16 @@ const LineaPage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [carouselIndex, setCarouselIndex] = useState(0);
-  const carouselRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const line = productLines.find((l) => l.id === lineaId);
   const description = lineDescriptions[lineaId || ""] || "";
 
-  // Products for the top carousel (from selected category or all)
   const activeCat = activeCategory
     ? line?.categories.find((c) => c.id === activeCategory) ?? null
     : null;
 
   const allProducts = line?.categories.flatMap((c) => c.products) ?? [];
-  const carouselProducts = (activeCat?.products ?? allProducts).filter(
-    (p) => p.images.length > 0
-  );
-
-  // Shown products in grid
   const displayedProducts = activeCat ? activeCat.products : allProducts;
-
-  // Auto-advance carousel
-  useEffect(() => {
-    if (carouselProducts.length <= 1) return;
-    carouselRef.current = setInterval(() => {
-      setCarouselIndex((prev) => (prev + 1) % carouselProducts.length);
-    }, 3000);
-    return () => {
-      if (carouselRef.current) clearInterval(carouselRef.current);
-    };
-  }, [carouselProducts.length, activeCategory]);
-
-  // Reset carousel index when category changes
-  useEffect(() => {
-    setCarouselIndex(0);
-  }, [activeCategory]);
 
   const handleWhatsApp = (productName: string) => {
     const message = encodeURIComponent(
@@ -74,6 +56,14 @@ const LineaPage = () => {
     setCurrentImageIndex(0);
   };
 
+  // Video mapping for each category/line
+  const videoMap: Record<string, string> = {
+    motores: motoresVideo,
+    aquamotos: motosVideo,
+    remolques: remolquesVideo,
+    "lubricantes-productos": lubricantesVideo,
+  };
+
   if (!line) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -84,17 +74,6 @@ const LineaPage = () => {
       </div>
     );
   }
-
-  // 3 visible products centered (center one bigger)
-  const visibleCount = 3;
-  const stripProducts =
-    carouselProducts.length > 0
-      ? Array.from({ length: visibleCount }, (_, i) =>
-          carouselProducts[(carouselIndex + i) % carouselProducts.length]
-        )
-      : [];
-
-  const activeCatName = activeCat?.name ?? (line.categories[0]?.name || line.title);
 
   return (
     <div className="min-h-screen bg-white">
@@ -112,19 +91,12 @@ const LineaPage = () => {
           </button>
         </div>
 
-        {/* ── HERO: Descripción + carrusel ── */}
+        {/* ── HERO: Descripción + Video ── */}
         <section className="py-10 bg-white overflow-hidden relative">
-          {/* Giant watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-            <span className="font-display font-black text-[14vw] text-gray-100 uppercase tracking-widest whitespace-nowrap">
-              {activeCatName}
-            </span>
-          </div>
-
           {/* Subtitle + Title */}
-          <div className="text-center mb-6 relative z-10 px-4">
+          <div className="text-center mb-8 relative z-10 px-4">
             <span className="text-secondary font-bold uppercase tracking-widest text-xs">
-              {activeCatName}
+              {activeCat?.name || "Todos los productos"}
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-black text-primary mt-1 uppercase tracking-tight">
               {line.title.replace("Linea ", "").replace("Línea ", "")}
@@ -134,54 +106,19 @@ const LineaPage = () => {
             </p>
           </div>
 
-          {/* Floating product carousel */}
-          {stripProducts.length > 0 && (
-            <div className="relative z-10 flex justify-center items-end gap-4 md:gap-10 px-4 min-h-[260px]">
-              {stripProducts.map((product, i) => (
-                <button
-                  key={`${product.id}-${i}`}
-                  onClick={() => openProductDetail(product)}
-                  className={`group transition-all duration-500 ${
-                    i === 1
-                      ? "scale-110 -translate-y-6 z-20"
-                      : "scale-90 opacity-70 z-10"
-                  }`}
-                >
-                  <div className="w-32 h-44 md:w-52 md:h-64 flex items-end justify-center">
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="max-w-full max-h-full object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <p
-                    className={`text-xs font-bold text-center mt-2 transition-opacity ${
-                      i === 1
-                        ? "text-primary opacity-100"
-                        : "text-muted-foreground opacity-0 group-hover:opacity-100"
-                    }`}
-                  >
-                    {product.name}
-                  </p>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Carousel dots */}
-          {carouselProducts.length > 1 && (
-            <div className="flex justify-center gap-2 mt-6 relative z-10">
-              {carouselProducts.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCarouselIndex(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    i === carouselIndex
-                      ? "bg-secondary w-6"
-                      : "bg-gray-300 w-2"
-                  }`}
+          {/* Video section */}
+          {activeCat && videoMap[activeCat.id] && (
+            <div className="max-w-5xl mx-auto px-4 mb-8">
+              <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl bg-black" style={{ paddingTop: '56.25%' }}>
+                <video 
+                  src={videoMap[activeCat.id]} 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
-              ))}
+              </div>
             </div>
           )}
         </section>
