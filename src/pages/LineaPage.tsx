@@ -132,12 +132,25 @@ const LineaPage = () => {
               <span className="text-secondary font-bold uppercase tracking-widest text-xs">
                 Todos los productos
               </span>
-              <h1 className="font-display text-4xl md:text-6xl font-black text-primary mt-1 uppercase tracking-tight">
+              <h1 className="font-display text-2xl md:text-3xl font-black text-primary mt-1 uppercase tracking-tight">
                 {line.title.replace("Linea ", "").replace("Línea ", "")}
               </h1>
               <p className="text-muted-foreground text-sm md:text-base mt-3 max-w-xl mx-auto leading-relaxed">
                 {description}
               </p>
+
+              {line.id === "lubricantes" && (
+                <div className="mt-6 relative w-full h-[300px] md:h-[420px] overflow-hidden bg-black rounded-lg">
+                  <video
+                    src={lubricantesVideo}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -151,18 +164,9 @@ const LineaPage = () => {
                 </span>
                 
                 {/* Large title - SHORT NAME */}
-                <h2 className="font-display text-4xl md:text-6xl font-black text-primary uppercase tracking-tight relative z-20 mb-2">
+                <h2 className="font-display text-2xl md:text-3xl font-black text-primary uppercase tracking-tight relative z-20 mb-2">
                   {getShortName(activeCat.name)}
                 </h2>
-
-                {/* Huge watermark behind - SHORT NAME */}
-                {videoMap[activeCat.id] && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-                    <span className="font-display font-black text-[15vw] text-primary/8 uppercase tracking-widest whitespace-nowrap">
-                      {getShortName(activeCat.name)}
-                    </span>
-                  </div>
-                )}
               </div>
 
               {/* Video if available */}
@@ -275,6 +279,7 @@ const LineaPage = () => {
             )}
           </div>
         </section>
+
       </main>
 
       {/* ── MODAL DETALLE ── */}
