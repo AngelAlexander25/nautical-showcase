@@ -81,7 +81,7 @@ Si quieres que lo editado en `/admin/dashboard` se vea también en otros disposi
 2. Configura al menos esta variable:
 
 ```env
-VITE_CATALOG_SYNC_URL=https://tu-api.com/catalog
+VITE_CATALOG_SYNC_URL=/.netlify/functions/catalog-sync
 ```
 
 Opcionales:
@@ -105,6 +105,22 @@ VITE_CATALOG_SYNC_TOKEN_HEADER=Authorization
 ```
 
 > Sin `VITE_CATALOG_SYNC_URL`, el sistema sigue funcionando en modo local (`localStorage`).
+
+### ✅ Sin API externa (Netlify)
+
+Este proyecto ya incluye una Netlify Function para guardar el catálogo en Netlify Blobs:
+
+- Endpoint: `/.netlify/functions/catalog-sync`
+- Archivo: `netlify/functions/catalog-sync.js`
+
+En Netlify (producción):
+1. Ve a `Site settings -> Environment variables`.
+2. Agrega:
+  - Key: `VITE_CATALOG_SYNC_URL`
+  - Value: `/.netlify/functions/catalog-sync`
+3. Haz redeploy (`Clear cache and deploy site`).
+
+Con eso, lo guardado en admin se comparte entre navegadores/dispositivos.
 
 ---
 
