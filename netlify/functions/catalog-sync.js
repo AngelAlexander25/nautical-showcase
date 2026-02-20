@@ -28,15 +28,18 @@ const parseRequestBody = (rawBody) => {
 };
 
 const getManualCredentials = () => {
-  const siteID =
+  const rawSiteID =
     process.env.NETLIFY_BLOBS_SITE_ID ||
     process.env.NETLIFY_SITE_ID ||
     process.env.SITE_ID;
 
-  const token =
+  const rawToken =
     process.env.NETLIFY_BLOBS_TOKEN ||
     process.env.NETLIFY_ACCESS_TOKEN ||
     process.env.NETLIFY_AUTH_TOKEN;
+
+  const siteID = typeof rawSiteID === 'string' ? rawSiteID.trim() : '';
+  const token = typeof rawToken === 'string' ? rawToken.trim() : '';
 
   return { siteID, token };
 };
@@ -44,7 +47,11 @@ const getManualCredentials = () => {
 const getStoreClient = () => {
   const { siteID, token } = getManualCredentials();
   if (siteID && token) {
-    return getStore(STORE_NAME, { siteID, token });
+    try {
+      return getStore(STORE_NAME, { siteID, token });
+    } catch {
+      return getStore({ name: STORE_NAME, siteID, token });
+    }
   }
 
   return getStore(STORE_NAME);
