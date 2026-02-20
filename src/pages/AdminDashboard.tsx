@@ -110,6 +110,7 @@ export default function AdminDashboard() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [productType, setProductType] = useState<keyof typeof SPEC_TEMPLATES>('motor');
   const [newSpecs, setNewSpecs] = useState<Array<{ key: string; value: string }>>([
     { key: '', value: '' }
@@ -147,9 +148,10 @@ export default function AdminDashboard() {
     setNewSpecs([{ key: '', value: '' }]);
   };
 
-  const handleSaveProduct = () => {
-    if (!selectedProduct) return;
+  const handleSaveProduct = async () => {
+    if (!selectedProduct || saving) return;
 
+    setSaving(true);
     const lineId = (selectedProduct as Product & { _lineId?: string })._lineId;
     const categoryId = (selectedProduct as Product & { _categoryId?: string })._categoryId;
 
@@ -173,10 +175,17 @@ export default function AdminDashboard() {
       return line;
     });
 
-    updateProductLines(newData);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
-    setEditMode(false);
+    try {
+      await updateProductLines(newData);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+      setEditMode(false);
+    } catch (e) {
+      console.error('Error al guardar:', e);
+      alert('Error al guardar. Intenta de nuevo.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleUpdateField = (field: string, value: string | string[] | Record<string, string> | undefined) => {
@@ -264,9 +273,14 @@ export default function AdminDashboard() {
             <p className="text-sm text-gray-500">Editor de Catálogo</p>
           </div>
           <div className="flex gap-2">
-            {saved && (
+            {saving && (
+              <Alert className="py-2 px-4 bg-blue-50 border-blue-200">
+                <AlertDescription className="text-blue-800">⏳ Guardando y sincronizando...</AlertDescription>
+              </Alert>
+            )}
+            {saved && !saving && (
               <Alert className="py-2 px-4 bg-green-50 border-green-200">
-                <AlertDescription className="text-green-800">✓ Cambios guardados automáticamente</AlertDescription>
+                <AlertDescription className="text-green-800">✓ Cambios guardados y sincronizados</AlertDescription>
               </Alert>
             )}
             <Button onClick={handleLogout} variant="ghost">
@@ -345,9 +359,9 @@ export default function AdminDashboard() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Editando: {selectedProduct.name}</CardTitle>
-                  <Button onClick={handleSaveProduct}>
+                  <Button onClick={handleSaveProduct} disabled={saving}>
                     <Save className="w-4 h-4 mr-2" />
-                    Guardar Cambios
+                    {saving ? 'Guardando...' : 'Guardar Cambios'}
                   </Button>
                 </CardHeader>
                 <CardContent>

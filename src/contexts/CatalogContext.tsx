@@ -25,11 +25,63 @@ const normalizeCatalogData = (lines: ProductLine[]) => {
 
 interface CatalogContextType {
   productLines: ProductLine[];
-  updateProductLines: (lines: ProductLine[]) => void;
+  updateProductLines: (lines: ProductLine[]) => Promise<void>;
   resetToDefault: () => void;
 }
 
 const CatalogContext = createContext<CatalogContextType | undefined>(undefined);
+
+const mergeProductLines = (
+  remote: ProductLine[],
+  local: ProductLine[]
+): ProductLine[] => {
+  const merged = [...remote];
+
+  local.forEach((localLine) => {
+    const remoteLineIndex = merged.findIndex((line) => line.id === localLine.id);
+
+    if (remoteLineIndex === -1) {
+      merged.push(localLine);
+      return;
+    }
+
+    const remoteLine = merged[remoteLineIndex];
+    const mergedCategories = [...remoteLine.categories];
+
+    localLine.categories.forEach((localCat) => {
+      const remoteCatIndex = mergedCategories.findIndex((cat) => cat.id === localCat.id);
+
+      if (remoteCatIndex === -1) {
+        mergedCategories.push(localCat);
+        return;
+      }
+
+      const remoteCat = mergedCategories[remoteCatIndex];
+      const mergedProducts = [...remoteCat.products];
+
+      localCat.products.forEach((localProd) => {
+        const remoteProdIndex = mergedProducts.findIndex((p) => p.id === localProd.id);
+        if (remoteProdIndex === -1) {
+          mergedProducts.push(localProd);
+        } else {
+          mergedProducts[remoteProdIndex] = localProd;
+        }
+      });
+
+      mergedCategories[remoteCatIndex] = {
+        ...remoteCat,
+        products: mergedProducts,
+      };
+    });
+
+    merged[remoteLineIndex] = {
+      ...remoteLine,
+      categories: mergedCategories,
+    };
+  });
+
+  return merged;
+};
 
 export function CatalogProvider({ children }: { children: ReactNode }) {
   const remoteSyncEnabled = isRemoteSyncEnabled();
@@ -88,24 +140,28 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     }
 
     localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(normalized));
+  }, [productLines]);
 
+  const updateProductLines = async (lines: ProductLine[]) => {
     if (!remoteSyncEnabled || !isRemoteHydrated) {
+      setProductLines(lines);
       return;
     }
 
-    const syncTimeout = window.setTimeout(() => {
-      saveCatalogToRemote(normalized).catch((e) => {
-        console.error('Error al guardar catálogo remoto:', e);
-      });
-    }, 400);
+    try {
+      const remoteCatalog = await loadCatalogFromRemote();
+      const remoteLines = remoteCatalog || defaultProductLines;
+      const merged = mergeProductLines(remoteLines, lines);
+      const normalized = normalizeCatalogData(merged);
 
-    return () => {
-      window.clearTimeout(syncTimeout);
-    };
-  }, [isRemoteHydrated, productLines, remoteSyncEnabled]);
+      setProductLines(normalized);
+      localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(normalized));
 
-  const updateProductLines = (lines: ProductLine[]) => {
-    setProductLines(lines);
+      await saveCatalogToRemote(normalized);
+    } catch (e) {
+      console.error('Error al sincronizar catálogo:', e);
+      setProductLines(lines);
+    }
   };
 
   const resetToDefault = () => {
