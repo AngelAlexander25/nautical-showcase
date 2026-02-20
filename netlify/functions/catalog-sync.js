@@ -27,9 +27,45 @@ const parseRequestBody = (rawBody) => {
   }
 };
 
+const getStoreClient = () => {
+  try {
+    return getStore(STORE_NAME);
+  } catch (error) {
+    if (error?.name !== 'MissingBlobsEnvironmentError') {
+      throw error;
+    }
+
+    const siteID =
+      process.env.NETLIFY_BLOBS_SITE_ID ||
+      process.env.NETLIFY_SITE_ID ||
+      process.env.SITE_ID;
+
+    const token =
+      process.env.NETLIFY_BLOBS_TOKEN ||
+      process.env.NETLIFY_ACCESS_TOKEN ||
+      process.env.NETLIFY_AUTH_TOKEN;
+
+    if (!siteID || !token) {
+      throw new Error(
+        'Blobs no configurado. Define NETLIFY_BLOBS_SITE_ID (o NETLIFY_SITE_ID) y NETLIFY_BLOBS_TOKEN.'
+      );
+    }
+
+    return getStore(STORE_NAME, { siteID, token });
+  }
+};
+
 export async function handler(event) {
   const method = event.httpMethod?.toUpperCase() || 'GET';
-  const store = getStore(STORE_NAME);
+
+  let store;
+  try {
+    store = getStoreClient();
+  } catch (error) {
+    return createResponse(500, {
+      error: error instanceof Error ? error.message : 'No se pudo inicializar almacenamiento',
+    });
+  }
 
   if (method === 'OPTIONS') {
     return {

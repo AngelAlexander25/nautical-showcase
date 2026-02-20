@@ -122,6 +122,15 @@ En Netlify (producción):
 
 Con eso, lo guardado en admin se comparte entre navegadores/dispositivos.
 
+### ⚠️ Si aparece `MissingBlobsEnvironmentError`
+
+Agrega también estas variables en Netlify (`Site settings -> Environment variables`):
+
+- `NETLIFY_BLOBS_SITE_ID` = tu **Project ID** (en `Project configuration -> General`)
+- `NETLIFY_BLOBS_TOKEN` = un **Personal Access Token** de Netlify
+
+> `VITE_CATALOG_SYNC_URL` sigue siendo `/.netlify/functions/catalog-sync`.
+
 ---
 
 ## 🗑️ Eliminar el Panel Admin (Producción)
