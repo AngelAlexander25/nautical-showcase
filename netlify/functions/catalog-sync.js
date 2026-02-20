@@ -75,7 +75,12 @@ const formatStorageError = (error) => {
 
 export async function handler(event) {
   const method = event.httpMethod?.toUpperCase() || 'GET';
-  const store = getStoreClient();
+  let store;
+  try {
+    store = getStoreClient();
+  } catch (error) {
+    return createResponse(500, formatStorageError(error));
+  }
 
   if (method === 'OPTIONS') {
     return {
