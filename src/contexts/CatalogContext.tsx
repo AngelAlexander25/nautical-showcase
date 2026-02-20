@@ -1,5 +1,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { productLines as defaultProductLines, type ProductLine } from '@/data/catalogData';
+import {
+  CATALOG_STORAGE_KEY,
+  isRemoteSyncEnabled,
+  loadCatalogFromRemote,
+  saveCatalogToRemote,
+} from '@/lib/catalogSync';
 
 const hasAquamotosInDeportiva = (lines: ProductLine[]) => {
   const deportiva = lines.find((line) => line.id === 'deportiva');
@@ -26,8 +32,9 @@ interface CatalogContextType {
 const CatalogContext = createContext<CatalogContextType | undefined>(undefined);
 
 export function CatalogProvider({ children }: { children: ReactNode }) {
+  const remoteSyncEnabled = isRemoteSyncEnabled();
   const [productLines, setProductLines] = useState<ProductLine[]>(() => {
-    const saved = localStorage.getItem('catalogData');
+    const saved = localStorage.getItem(CATALOG_STORAGE_KEY);
     if (saved) {
       try {
         return normalizeCatalogData(JSON.parse(saved));
@@ -38,6 +45,39 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     }
     return defaultProductLines;
   });
+  const [isRemoteHydrated, setIsRemoteHydrated] = useState(!remoteSyncEnabled);
+
+  useEffect(() => {
+    if (!remoteSyncEnabled) return;
+
+    let isCancelled = false;
+
+    const hydrateFromRemote = async () => {
+      try {
+        const remoteCatalog = await loadCatalogFromRemote();
+
+        if (isCancelled || !remoteCatalog) {
+          return;
+        }
+
+        const normalized = normalizeCatalogData(remoteCatalog);
+        setProductLines(normalized);
+        localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(normalized));
+      } catch (e) {
+        console.error('Error al cargar catálogo remoto:', e);
+      } finally {
+        if (!isCancelled) {
+          setIsRemoteHydrated(true);
+        }
+      }
+    };
+
+    hydrateFromRemote();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [remoteSyncEnabled]);
 
   useEffect(() => {
     const normalized = normalizeCatalogData(productLines);
@@ -47,8 +87,22 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    localStorage.setItem('catalogData', JSON.stringify(normalized));
-  }, [productLines]);
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(normalized));
+
+    if (!remoteSyncEnabled || !isRemoteHydrated) {
+      return;
+    }
+
+    const syncTimeout = window.setTimeout(() => {
+      saveCatalogToRemote(normalized).catch((e) => {
+        console.error('Error al guardar catálogo remoto:', e);
+      });
+    }, 400);
+
+    return () => {
+      window.clearTimeout(syncTimeout);
+    };
+  }, [isRemoteHydrated, productLines, remoteSyncEnabled]);
 
   const updateProductLines = (lines: ProductLine[]) => {
     setProductLines(lines);
@@ -56,7 +110,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
 
   const resetToDefault = () => {
     setProductLines(defaultProductLines);
-    localStorage.removeItem('catalogData');
+    localStorage.removeItem(CATALOG_STORAGE_KEY);
   };
 
   return (

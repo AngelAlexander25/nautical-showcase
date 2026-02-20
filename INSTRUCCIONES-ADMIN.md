@@ -73,6 +73,41 @@ Los cambios se guardan en **localStorage** del navegador:
 
 ---
 
+## 🌐 Compartir cambios entre navegadores/dispositivos
+
+Si quieres que lo editado en `/admin/dashboard` se vea también en otros dispositivos, debes activar sincronización remota:
+
+1. Crea un archivo `.env.local` en la raíz del proyecto.
+2. Configura al menos esta variable:
+
+```env
+VITE_CATALOG_SYNC_URL=https://tu-api.com/catalog
+```
+
+Opcionales:
+
+```env
+VITE_CATALOG_SYNC_METHOD=PUT
+VITE_CATALOG_SYNC_TOKEN=tu_token
+VITE_CATALOG_SYNC_TOKEN_HEADER=Authorization
+```
+
+### Formato esperado del endpoint
+
+- `GET` debe responder un arreglo directo de líneas, o un objeto con `productLines`.
+- `PUT/POST/PATCH` recibe este JSON:
+
+```json
+{
+  "productLines": [ ... ],
+  "updatedAt": "2026-02-19T00:00:00.000Z"
+}
+```
+
+> Sin `VITE_CATALOG_SYNC_URL`, el sistema sigue funcionando en modo local (`localStorage`).
+
+---
+
 ## 🗑️ Eliminar el Panel Admin (Producción)
 
 Cuando termines de configurar tu catálogo y quieras publicar la web:
