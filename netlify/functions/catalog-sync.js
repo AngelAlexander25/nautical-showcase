@@ -27,45 +27,55 @@ const parseRequestBody = (rawBody) => {
   }
 };
 
+const getManualCredentials = () => {
+  const siteID =
+    process.env.NETLIFY_BLOBS_SITE_ID ||
+    process.env.NETLIFY_SITE_ID ||
+    process.env.SITE_ID;
+
+  const token =
+    process.env.NETLIFY_BLOBS_TOKEN ||
+    process.env.NETLIFY_ACCESS_TOKEN ||
+    process.env.NETLIFY_AUTH_TOKEN;
+
+  return { siteID, token };
+};
+
 const getStoreClient = () => {
-  try {
-    return getStore(STORE_NAME);
-  } catch (error) {
-    if (error?.name !== 'MissingBlobsEnvironmentError') {
-      throw error;
-    }
-
-    const siteID =
-      process.env.NETLIFY_BLOBS_SITE_ID ||
-      process.env.NETLIFY_SITE_ID ||
-      process.env.SITE_ID;
-
-    const token =
-      process.env.NETLIFY_BLOBS_TOKEN ||
-      process.env.NETLIFY_ACCESS_TOKEN ||
-      process.env.NETLIFY_AUTH_TOKEN;
-
-    if (!siteID || !token) {
-      throw new Error(
-        'Blobs no configurado. Define NETLIFY_BLOBS_SITE_ID (o NETLIFY_SITE_ID) y NETLIFY_BLOBS_TOKEN.'
-      );
-    }
-
+  const { siteID, token } = getManualCredentials();
+  if (siteID && token) {
     return getStore(STORE_NAME, { siteID, token });
   }
+
+  return getStore(STORE_NAME);
+};
+
+const formatStorageError = (error) => {
+  const { siteID, token } = getManualCredentials();
+
+  if (error?.name === 'MissingBlobsEnvironmentError') {
+    return {
+      error:
+        'Blobs no configurado. Define NETLIFY_BLOBS_SITE_ID y NETLIFY_BLOBS_TOKEN (o verifica runtime de Netlify).',
+      diagnostics: {
+        hasSiteID: Boolean(siteID),
+        hasToken: Boolean(token),
+      },
+    };
+  }
+
+  return {
+    error: error instanceof Error ? error.message : 'Error de almacenamiento',
+    diagnostics: {
+      hasSiteID: Boolean(siteID),
+      hasToken: Boolean(token),
+    },
+  };
 };
 
 export async function handler(event) {
   const method = event.httpMethod?.toUpperCase() || 'GET';
-
-  let store;
-  try {
-    store = getStoreClient();
-  } catch (error) {
-    return createResponse(500, {
-      error: error instanceof Error ? error.message : 'No se pudo inicializar almacenamiento',
-    });
-  }
+  const store = getStoreClient();
 
   if (method === 'OPTIONS') {
     return {
@@ -76,15 +86,19 @@ export async function handler(event) {
   }
 
   if (method === 'GET') {
-    const [productLines, updatedAt] = await Promise.all([
-      store.get(PRODUCT_LINES_KEY, { type: 'json' }),
-      store.get(UPDATED_AT_KEY),
-    ]);
+    try {
+      const [productLines, updatedAt] = await Promise.all([
+        store.get(PRODUCT_LINES_KEY, { type: 'json' }),
+        store.get(UPDATED_AT_KEY),
+      ]);
 
-    return createResponse(200, {
-      productLines: Array.isArray(productLines) ? productLines : null,
-      updatedAt: updatedAt || null,
-    });
+      return createResponse(200, {
+        productLines: Array.isArray(productLines) ? productLines : null,
+        updatedAt: updatedAt || null,
+      });
+    } catch (error) {
+      return createResponse(500, formatStorageError(error));
+    }
   }
 
   if (method === 'PUT' || method === 'POST' || method === 'PATCH') {
@@ -103,17 +117,21 @@ export async function handler(event) {
 
     const updatedAt = body?.updatedAt || new Date().toISOString();
 
-    await Promise.all([
-      store.set(PRODUCT_LINES_KEY, JSON.stringify(productLines), {
-        contentType: 'application/json',
-      }),
-      store.set(UPDATED_AT_KEY, String(updatedAt)),
-    ]);
+    try {
+      await Promise.all([
+        store.set(PRODUCT_LINES_KEY, JSON.stringify(productLines), {
+          contentType: 'application/json',
+        }),
+        store.set(UPDATED_AT_KEY, String(updatedAt)),
+      ]);
 
-    return createResponse(200, {
-      ok: true,
-      updatedAt,
-    });
+      return createResponse(200, {
+        ok: true,
+        updatedAt,
+      });
+    } catch (error) {
+      return createResponse(500, formatStorageError(error));
+    }
   }
 
   return createResponse(405, {
