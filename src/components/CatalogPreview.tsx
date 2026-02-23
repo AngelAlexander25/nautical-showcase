@@ -4,8 +4,14 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 
 import boatsMarina from "@/assets/carousel/boats-marina.jpg";
+import boatsMarinaWebp from "@/assets/carousel/boats-marina.webp";
+import boatsMarinaAvif from "@/assets/carousel/boats-marina.avif";
 import motorsHero from "@/assets/carousel/motors-hero.jpg";
+import motorsHeroWebp from "@/assets/carousel/motors-hero.webp";
+import motorsHeroAvif from "@/assets/carousel/motors-hero.avif";
 import lubricantsHero from "@/assets/carousel/lubricants-hero.jpg";
+import lubricantsHeroWebp from "@/assets/carousel/lubricants-hero.webp";
+import lubricantsHeroAvif from "@/assets/carousel/lubricants-hero.avif";
 
 const catalogSlides = [
   {
@@ -13,18 +19,24 @@ const catalogSlides = [
     title: "Linea Productiva",
     subtitle: "Lanchas y Motores Fuera de Borda",
     image: boatsMarina,
+    imageWebp: boatsMarinaWebp,
+    imageAvif: boatsMarinaAvif,
   },
   {
     id: "deportiva",
     title: "Linea Deportiva",
     subtitle: "Motos Acuáticas y Remolques",
     image: motorsHero,
+    imageWebp: motorsHeroWebp,
+    imageAvif: motorsHeroAvif,
   },
   {
     id: "lubricantes",
     title: "Linea de Lubricantes",
     subtitle: "Aceites Yamalube premium",
     image: lubricantsHero,
+    imageWebp: lubricantsHeroWebp,
+    imageAvif: lubricantsHeroAvif,
   },
 ];
 
@@ -83,6 +95,14 @@ const CatalogPreview = () => {
     startAuto();
   };
 
+  const isNearCurrentSlide = (index: number) => {
+    const total = catalogSlides.length;
+    const prevIndex = (current - 1 + total) % total;
+    const nextIndex = (current + 1) % total;
+
+    return index === current || index === prevIndex || index === nextIndex;
+  };
+
   return (
     <section id="catalogo" className="py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -90,7 +110,7 @@ const CatalogPreview = () => {
           <span className="text-secondary font-semibold uppercase tracking-wider text-sm">
             Nuestros Productos
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-primary mt-2 mb-4">
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-primary mt-2 mb-4">
             Catalogo de Productos
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -116,18 +136,28 @@ const CatalogPreview = () => {
                       i === current ? "opacity-100 scale-100" : "opacity-0 scale-110"
                     }`}
                   >
-                    <img
-                      src={slide.image}
-                      alt={slide.title}
-                      className="w-full h-full object-cover"
-                    />
+                    {isNearCurrentSlide(i) ? (
+                      <picture>
+                        <source srcSet={slide.imageAvif} type="image/avif" />
+                        <source srcSet={slide.imageWebp} type="image/webp" />
+                        <img
+                          src={slide.image}
+                          alt={slide.title}
+                          className="w-full h-full object-cover"
+                          loading={i === current ? "eager" : "lazy"}
+                          decoding="async"
+                        />
+                      </picture>
+                    ) : (
+                      <div className="w-full h-full bg-slate-200" aria-hidden="true" />
+                    )}
                     {/* Dark gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   </div>
                 ))}
 
                 {/* Carousel Caption - Overlay on image */}
-                <div className="absolute bottom-0 left-0 right-0 px-4 md:px-12 py-8 md:py-16 text-white z-10">
+                <div className="absolute bottom-0 left-0 right-0 px-4 md:px-12 py-6 md:py-16 text-white z-10">
                   <p className="text-secondary font-bold uppercase tracking-widest text-xs md:text-sm mb-1 md:mb-2 transition-opacity duration-500">
                     {catalogSlides[current].subtitle}
                   </p>
@@ -163,14 +193,14 @@ const CatalogPreview = () => {
                 {/* Navigation arrows */}
                 <button
                   onClick={prev}
-                  className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-2 md:p-3 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 hover:scale-110"
+                  className="hidden md:block absolute left-3 md:left-6 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-2 md:p-3 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 hover:scale-110"
                   aria-label="Anterior"
                 >
                   <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
                 <button
                   onClick={next}
-                  className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-2 md:p-3 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 hover:scale-110"
+                  className="hidden md:block absolute right-3 md:right-6 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-2 md:p-3 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 hover:scale-110"
                   aria-label="Siguiente"
                 >
                   <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
@@ -200,11 +230,17 @@ const CatalogPreview = () => {
                   }`}
                   aria-label={`Seleccionar ${slide.title}`}
                 >
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover/thumb:scale-125"
-                  />
+                  <picture>
+                    <source srcSet={slide.imageAvif} type="image/avif" />
+                    <source srcSet={slide.imageWebp} type="image/webp" />
+                    <img
+                      src={slide.image}
+                      alt={slide.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover/thumb:scale-125"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </picture>
                   {/* Dark overlay for text */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end p-3">
                     <span className="text-white text-[11px] md:text-sm font-bold uppercase line-clamp-2 transition-opacity duration-300">
@@ -216,7 +252,7 @@ const CatalogPreview = () => {
             </div>
 
             {/* Mobile navigation arrows - always visible */}
-            <div className="md:hidden flex justify-between absolute -left-16 -right-16 top-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="md:hidden flex justify-between absolute left-3 right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <button
                 onClick={prev}
                 className="bg-primary hover:bg-primary/80 text-white p-3 rounded-full transition-all shadow-lg z-20 pointer-events-auto hover:scale-110"

@@ -3,14 +3,42 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import boatDeck from "@/assets/fondo.mp4";
+import boatsMarina from "@/assets/carousel/boats-marina.jpg";
+import boatsMarinaWebp from "@/assets/carousel/boats-marina.webp";
+import boatsMarinaAvif from "@/assets/carousel/boats-marina.avif";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Hero = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
-        <video src={boatDeck} autoPlay loop muted playsInline preload="auto" className="w-full h-full object-cover" />
+        {isMobile ? (
+          <picture>
+            <source srcSet={boatsMarinaAvif} type="image/avif" />
+            <source srcSet={boatsMarinaWebp} type="image/webp" />
+            <img
+              src={boatsMarina}
+              alt="Vista marina"
+              className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
+            />
+          </picture>
+        ) : (
+          <video
+            src={boatDeck}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster={boatsMarina}
+            className="w-full h-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-hero-overlay" />
       </div>
 

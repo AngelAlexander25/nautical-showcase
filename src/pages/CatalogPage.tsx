@@ -68,18 +68,18 @@ const CatalogPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <main className="pt-24 pb-20">
+      <main className="pt-20 md:pt-24 pb-16 md:pb-20">
 
         {/* Hero header */}
-        <div className="relative overflow-hidden bg-primary py-16 mb-16">
+        <div className="relative overflow-hidden bg-primary py-12 md:py-16 mb-10 md:mb-16">
           <div className="relative z-10 text-center px-4">
             <span className="text-secondary font-bold uppercase tracking-widest text-xs block mb-2">
               Nuestros Productos
             </span>
-            <h1 className="font-display text-5xl md:text-7xl font-black text-white uppercase tracking-tight">
+            <h1 className="font-display text-4xl md:text-7xl font-black text-white uppercase tracking-tight">
               Catálogo
             </h1>
-            <p className="text-white/70 text-base mt-4 max-w-lg mx-auto">
+            <p className="text-white/70 text-sm md:text-base mt-3 md:mt-4 max-w-lg mx-auto">
               Selecciona una línea de productos para explorar nuestra colección completa.
             </p>
           </div>
@@ -87,7 +87,7 @@ const CatalogPage = () => {
 
         {/* Line cards */}
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
             {visibleLines.map((line) => {
               const cfg = lineConfig[line.id];
               const Icon = cfg?.icon ?? Anchor;
@@ -120,6 +120,8 @@ const CatalogPage = () => {
                             src={p.images[0]}
                             alt={p.name}
                             className="h-28 w-28 object-contain drop-shadow-md"
+                            loading="lazy"
+                            decoding="async"
                           />
                         </div>
                       ))

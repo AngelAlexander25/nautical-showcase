@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useCatalog } from "@/contexts/CatalogContext";
 import type { Product } from "@/data/catalogData";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import videos
 import motoresVideo from "../assets/motor.mp4";
@@ -32,6 +33,7 @@ const LineaPage = () => {
   const { lineaId } = useParams<{ lineaId: string }>();
   const navigate = useNavigate();
   const { productLines } = useCatalog();
+  const isMobile = useIsMobile();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -117,8 +119,8 @@ const LineaPage = () => {
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="pt-24">
-        <section className="border-b border-gray-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 sticky top-20 z-30">
+      <main className="pt-20 md:pt-24">
+        <section className="border-b border-gray-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 sticky top-16 md:top-20 z-30">
           <div className="container mx-auto px-4 py-4">
             <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground text-center mb-3">
               Cambiar línea
@@ -131,7 +133,7 @@ const LineaPage = () => {
                   <button
                     key={productLine.id}
                     onClick={() => navigate(`/catalogo/${productLine.id}`)}
-                    className={`px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wide border-2 transition-all ${
+                    className={`px-4 md:px-5 py-2 rounded-full text-[11px] md:text-sm font-bold uppercase tracking-wide border-2 transition-all ${
                       isActive
                         ? "bg-primary text-white border-primary"
                         : "bg-white text-primary border-primary/25 hover:border-primary"
@@ -172,7 +174,7 @@ const LineaPage = () => {
                 {description}
               </p>
 
-              {line.id === "lubricantes" && (
+              {line.id === "lubricantes" && !isMobile && (
                 <div className="mt-6 relative w-full h-[300px] md:h-[420px] overflow-hidden bg-black rounded-lg">
                   <video
                     src={lubricantesVideo}
@@ -180,6 +182,7 @@ const LineaPage = () => {
                     loop
                     muted
                     playsInline
+                    preload="none"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
@@ -203,7 +206,7 @@ const LineaPage = () => {
               </div>
 
               {/* Video if available */}
-              {videoMap[activeCat.id] && (
+              {videoMap[activeCat.id] && !isMobile && (
                 <div className="relative w-full h-[360px] md:h-[500px] overflow-hidden bg-black rounded-lg">
                   <video
                     src={videoMap[activeCat.id]}
@@ -211,6 +214,7 @@ const LineaPage = () => {
                     loop
                     muted
                     playsInline
+                    preload="none"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
@@ -244,7 +248,7 @@ const LineaPage = () => {
               <div className="flex flex-wrap justify-center gap-3">
                 <button
                   onClick={() => setActiveCategory(null)}
-                  className={`px-8 py-3 rounded-full font-bold text-sm border-2 transition-all ${
+                  className={`px-4 md:px-8 py-2.5 md:py-3 rounded-full font-bold text-xs md:text-sm border-2 transition-all ${
                     activeCategory === null
                       ? "bg-primary text-white border-primary shadow-lg scale-105"
                       : "bg-white text-primary border-primary/30 hover:border-primary"
@@ -256,7 +260,7 @@ const LineaPage = () => {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`px-8 py-3 rounded-full font-bold text-sm border-2 transition-all ${
+                    className={`px-4 md:px-8 py-2.5 md:py-3 rounded-full font-bold text-xs md:text-sm border-2 transition-all ${
                       activeCategory === cat.id
                         ? "bg-primary text-white border-primary shadow-lg scale-105"
                         : "bg-white text-primary border-primary/30 hover:border-primary"
@@ -280,7 +284,7 @@ const LineaPage = () => {
             {!activeCat ? (
               line.categories.map((cat) => (
                 <div key={cat.id} className="mb-16">
-                  <div className="flex items-center gap-4 mb-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-8">
                     <div>
                       <h2 className="font-display text-2xl md:text-3xl font-black text-primary uppercase">
                         {cat.name}
@@ -290,7 +294,7 @@ const LineaPage = () => {
                     {line.categories.length > 1 && (
                       <button
                         onClick={() => setActiveCategory(cat.id)}
-                        className="ml-auto text-sm text-primary hover:text-secondary font-semibold transition-colors"
+                        className="sm:ml-auto text-sm text-primary hover:text-secondary font-semibold transition-colors"
                       >
                         Ver solo {cat.name} →
                       </button>
@@ -317,7 +321,7 @@ const LineaPage = () => {
 
       {/* ── MODAL DETALLE ── */}
       <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] md:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-display text-2xl text-primary">
               {selectedProduct?.name}
@@ -334,6 +338,7 @@ const LineaPage = () => {
                       src={selectedProduct.images[currentImageIndex]}
                       alt={selectedProduct.name}
                       className="w-full h-full object-contain"
+                      decoding="async"
                     />
                     {selectedProduct.images.length > 1 && (
                       <>
@@ -378,7 +383,13 @@ const LineaPage = () => {
                         i === currentImageIndex ? "border-secondary" : "border-border"
                       }`}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img
+                        src={img}
+                        alt=""
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </button>
                   ))}
                 </div>
@@ -533,6 +544,8 @@ const ProductGrid = ({
               src={product.images[0]}
               alt={product.name}
               className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <span className="text-muted-foreground text-xs">Sin imagen</span>

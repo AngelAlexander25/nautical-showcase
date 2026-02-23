@@ -59,12 +59,12 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 md:h-20">
           <button onClick={() => { navigate("/"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="flex items-center gap-3">
             <img
               src={logo}
               alt="Aqua Servi Logo"
-              className="h-14 w-auto transition-all duration-300"
+              className="h-11 md:h-14 w-auto transition-all duration-300"
             />
           </button>
 
@@ -104,7 +104,7 @@ const Header = () => {
         </div>
 
         {isMenuOpen && (
-          <nav className={`md:hidden py-4 border-t ${transparent ? "border-white/20" : "border-border/50"}`}>
+          <nav className={`md:hidden py-4 border-t ${transparent ? "bg-primary/85 backdrop-blur border-white/20" : "border-border/50"}`}>
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <button

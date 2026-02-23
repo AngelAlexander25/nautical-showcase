@@ -1,5 +1,7 @@
 import { Award, Shield, Wrench, Users } from "lucide-react";
 import boatDeck from "@/assets/boat-deck.png";
+import boatDeckWebp from "@/assets/boat-deck.webp";
+import boatDeckAvif from "@/assets/boat-deck.avif";
 import AnimatedSection, { SlideInLeft, SlideInRight, StaggerContainer, StaggerItem } from "./AnimatedSection";
 
 const features = [
@@ -34,11 +36,17 @@ const About = () => {
           <SlideInLeft>
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src={boatDeck}
-                  alt="Vista desde embarcacion"
-                  className="w-full h-[500px] object-cover"
-                />
+                <picture>
+                  <source srcSet={boatDeckAvif} type="image/avif" />
+                  <source srcSet={boatDeckWebp} type="image/webp" />
+                  <img
+                    src={boatDeck}
+                    alt="Vista desde embarcacion"
+                    className="w-full h-[320px] sm:h-[420px] md:h-[500px] object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
               </div>
               <div className="absolute -bottom-8 -right-8 bg-card p-6 rounded-xl shadow-xl border border-border hidden md:block">

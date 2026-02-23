@@ -1,11 +1,25 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { productLines as defaultProductLines, type ProductLine } from '@/data/catalogData';
+import type { ProductLine } from '@/data/catalogData';
 import {
   CATALOG_STORAGE_KEY,
   isRemoteSyncEnabled,
   loadCatalogFromRemote,
   saveCatalogToRemote,
 } from '@/lib/catalogSync';
+
+let defaultProductLinesCache: ProductLine[] | null = null;
+
+const loadDefaultProductLines = async (): Promise<ProductLine[]> => {
+  if (defaultProductLinesCache) {
+    return defaultProductLinesCache;
+  }
+
+  const module = await import('@/data/catalogData');
+  defaultProductLinesCache = module.productLines;
+  return defaultProductLinesCache;
+};
+
+const getCachedDefaultProductLines = (): ProductLine[] => defaultProductLinesCache ?? [];
 
 const hasAquamotosInDeportiva = (lines: ProductLine[]) => {
   const deportiva = lines.find((line) => line.id === 'deportiva');
@@ -15,12 +29,16 @@ const hasAquamotosInDeportiva = (lines: ProductLine[]) => {
   return !!aquamotos && aquamotos.products.length > 0;
 };
 
-const normalizeCatalogData = (lines: ProductLine[]) => {
+const normalizeCatalogData = (lines: ProductLine[], fallback: ProductLine[]) => {
+  if (fallback.length === 0) {
+    return lines;
+  }
+
   if (hasAquamotosInDeportiva(lines)) {
     return lines;
   }
 
-  return defaultProductLines;
+  return fallback;
 };
 
 interface CatalogContextType {
@@ -89,15 +107,48 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem(CATALOG_STORAGE_KEY);
     if (saved) {
       try {
-        return normalizeCatalogData(JSON.parse(saved));
+        return normalizeCatalogData(JSON.parse(saved), getCachedDefaultProductLines());
       } catch (e) {
         console.error('Error al cargar catálogo guardado:', e);
-        return defaultProductLines;
+        return [];
       }
     }
-    return defaultProductLines;
+    return [];
   });
   const [isRemoteHydrated, setIsRemoteHydrated] = useState(!remoteSyncEnabled);
+
+  useEffect(() => {
+    if (productLines.length > 0) return;
+
+    let isCancelled = false;
+
+    const hydrateDefaults = async () => {
+      try {
+        const fallback = await loadDefaultProductLines();
+
+        if (isCancelled) {
+          return;
+        }
+
+        setProductLines((current) => {
+          if (current.length > 0) {
+            return current;
+          }
+
+          localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(fallback));
+          return fallback;
+        });
+      } catch (e) {
+        console.error('Error al cargar catálogo base:', e);
+      }
+    };
+
+    hydrateDefaults();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [productLines.length]);
 
   useEffect(() => {
     if (!remoteSyncEnabled) return;
@@ -107,12 +158,13 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     const hydrateFromRemote = async () => {
       try {
         const remoteCatalog = await loadCatalogFromRemote();
+        const fallback = await loadDefaultProductLines();
 
         if (isCancelled || !remoteCatalog) {
           return;
         }
 
-        const normalized = normalizeCatalogData(remoteCatalog);
+        const normalized = normalizeCatalogData(remoteCatalog, fallback);
         setProductLines(normalized);
         localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(normalized));
       } catch (e) {
@@ -132,7 +184,11 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   }, [remoteSyncEnabled]);
 
   useEffect(() => {
-    const normalized = normalizeCatalogData(productLines);
+    if (productLines.length === 0) {
+      return;
+    }
+
+    const normalized = normalizeCatalogData(productLines, getCachedDefaultProductLines());
 
     if (normalized !== productLines) {
       setProductLines(normalized);
@@ -145,14 +201,18 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   const updateProductLines = async (lines: ProductLine[]) => {
     if (!remoteSyncEnabled || !isRemoteHydrated) {
       setProductLines(lines);
+      if (lines.length > 0) {
+        localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(lines));
+      }
       return;
     }
 
     try {
       const remoteCatalog = await loadCatalogFromRemote();
-      const remoteLines = remoteCatalog || defaultProductLines;
+      const fallback = await loadDefaultProductLines();
+      const remoteLines = remoteCatalog || fallback;
       const merged = mergeProductLines(remoteLines, lines);
-      const normalized = normalizeCatalogData(merged);
+      const normalized = normalizeCatalogData(merged, fallback);
 
       setProductLines(normalized);
       localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(normalized));
@@ -165,8 +225,11 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
   };
 
   const resetToDefault = () => {
-    setProductLines(defaultProductLines);
-    localStorage.removeItem(CATALOG_STORAGE_KEY);
+    void (async () => {
+      const fallback = await loadDefaultProductLines();
+      setProductLines(fallback);
+      localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(fallback));
+    })();
   };
 
   return (
