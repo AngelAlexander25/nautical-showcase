@@ -112,6 +112,23 @@ const Contact = () => {
               </div>
             </div>
 
+            <div className="mb-10 p-5 rounded-xl bg-card border border-border">
+              <h3 className="font-semibold text-foreground mb-3">Ubicacion del Taller</h3>
+              <div className="rounded-xl overflow-hidden border border-border">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3720.191321898263!2d-86.81226702438083!3d21.184557380504085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4c2f052adced75%3A0xf8c5442f076dcd2b!2sAqua%20Servi%20Yamaha!5e0!3m2!1ses-419!2smx!4v1771883041638!5m2!1ses-419!2smx"
+                  width="600"
+                  height="450"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-64"
+                  title="Ubicacion Aqua Servi Yamaha"
+                />
+              </div>
+            </div>
+
             {/* WhatsApp Button */}
             <Button
               onClick={handleDirectWhatsApp}

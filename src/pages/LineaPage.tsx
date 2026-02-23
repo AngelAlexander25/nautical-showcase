@@ -9,7 +9,6 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useCatalog } from "@/contexts/CatalogContext";
 import type { Product } from "@/data/catalogData";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // Import videos
 import motoresVideo from "../assets/motor.mp4";
@@ -33,7 +32,6 @@ const LineaPage = () => {
   const { lineaId } = useParams<{ lineaId: string }>();
   const navigate = useNavigate();
   const { productLines } = useCatalog();
-  const isMobile = useIsMobile();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -174,15 +172,15 @@ const LineaPage = () => {
                 {description}
               </p>
 
-              {line.id === "lubricantes" && !isMobile && (
-                <div className="mt-6 relative w-full h-[300px] md:h-[420px] overflow-hidden bg-black rounded-lg">
+              {line.id === "lubricantes" && (
+                <div className="mt-6 relative w-full h-[220px] sm:h-[260px] md:h-[420px] overflow-hidden bg-black rounded-lg">
                   <video
                     src={lubricantesVideo}
                     autoPlay
                     loop
                     muted
                     playsInline
-                    preload="none"
+                    preload="metadata"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
@@ -206,15 +204,15 @@ const LineaPage = () => {
               </div>
 
               {/* Video if available */}
-              {videoMap[activeCat.id] && !isMobile && (
-                <div className="relative w-full h-[360px] md:h-[500px] overflow-hidden bg-black rounded-lg">
+              {videoMap[activeCat.id] && (
+                <div className="relative w-full h-[220px] sm:h-[300px] md:h-[500px] overflow-hidden bg-black rounded-lg">
                   <video
                     src={videoMap[activeCat.id]}
                     autoPlay
                     loop
                     muted
                     playsInline
-                    preload="none"
+                    preload="metadata"
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
@@ -321,7 +319,7 @@ const LineaPage = () => {
 
       {/* ── MODAL DETALLE ── */}
       <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-        <DialogContent className="w-[95vw] md:max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="left-0 top-0 w-screen max-w-none h-[100dvh] max-h-[100dvh] translate-x-0 translate-y-0 rounded-none overflow-y-auto p-4 data-[state=open]:animate-none data-[state=closed]:animate-none md:left-[50%] md:top-[50%] md:w-[95vw] md:max-w-3xl md:h-auto md:max-h-[90vh] md:translate-x-[-50%] md:translate-y-[-50%] md:rounded-lg md:p-6 md:data-[state=open]:animate-in md:data-[state=closed]:animate-out">
           <DialogHeader>
             <DialogTitle className="font-display text-2xl text-primary">
               {selectedProduct?.name}

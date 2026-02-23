@@ -3,24 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import AnimatedSection from "./AnimatedSection";
 
-import boatsMarina from "@/assets/carousel/boats-marina.jpg";
-import boatsMarinaWebp from "@/assets/carousel/boats-marina.webp";
-import boatsMarinaAvif from "@/assets/carousel/boats-marina.avif";
+import lanchasImage from "@/assets/lanchas.jpg";
 import motorsHero from "@/assets/carousel/motors-hero.jpg";
 import motorsHeroWebp from "@/assets/carousel/motors-hero.webp";
 import motorsHeroAvif from "@/assets/carousel/motors-hero.avif";
-import lubricantsHero from "@/assets/carousel/lubricants-hero.jpg";
-import lubricantsHeroWebp from "@/assets/carousel/lubricants-hero.webp";
-import lubricantsHeroAvif from "@/assets/carousel/lubricants-hero.avif";
+import lubricantesImage from "@/assets/lubricantes.png";
 
-const catalogSlides = [
+type CatalogSlide = {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  imageWebp?: string;
+  imageAvif?: string;
+};
+
+const catalogSlides: CatalogSlide[] = [
   {
     id: "productiva",
     title: "Linea Productiva",
     subtitle: "Lanchas y Motores Fuera de Borda",
-    image: boatsMarina,
-    imageWebp: boatsMarinaWebp,
-    imageAvif: boatsMarinaAvif,
+    image: lanchasImage,
   },
   {
     id: "deportiva",
@@ -34,9 +37,7 @@ const catalogSlides = [
     id: "lubricantes",
     title: "Linea de Lubricantes",
     subtitle: "Aceites Yamalube premium",
-    image: lubricantsHero,
-    imageWebp: lubricantsHeroWebp,
-    imageAvif: lubricantsHeroAvif,
+    image: lubricantesImage,
   },
 ];
 
@@ -138,8 +139,8 @@ const CatalogPreview = () => {
                   >
                     {isNearCurrentSlide(i) ? (
                       <picture>
-                        <source srcSet={slide.imageAvif} type="image/avif" />
-                        <source srcSet={slide.imageWebp} type="image/webp" />
+                        {slide.imageAvif && <source srcSet={slide.imageAvif} type="image/avif" />}
+                        {slide.imageWebp && <source srcSet={slide.imageWebp} type="image/webp" />}
                         <img
                           src={slide.image}
                           alt={slide.title}
@@ -231,8 +232,8 @@ const CatalogPreview = () => {
                   aria-label={`Seleccionar ${slide.title}`}
                 >
                   <picture>
-                    <source srcSet={slide.imageAvif} type="image/avif" />
-                    <source srcSet={slide.imageWebp} type="image/webp" />
+                    {slide.imageAvif && <source srcSet={slide.imageAvif} type="image/avif" />}
+                    {slide.imageWebp && <source srcSet={slide.imageWebp} type="image/webp" />}
                     <img
                       src={slide.image}
                       alt={slide.title}
