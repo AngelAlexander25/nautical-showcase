@@ -64,7 +64,7 @@ const Header = () => {
             <img
               src={logo}
               alt="Aqua Servi Logo"
-              className={`h-14 w-auto transition-all duration-300 ${transparent ? "brightness-0 invert" : ""}`}
+              className="h-14 w-auto transition-all duration-300"
             />
           </button>
 

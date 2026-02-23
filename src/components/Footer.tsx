@@ -24,7 +24,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <img src={logo} alt="Aqua Servi" className="h-14 mb-6 brightness-0 invert" />
+            <img src={logo} alt="Aqua Servi" className="h-14 mb-6" />
             <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-sm">
               Con mas de 30 años de experiencia, somos tu aliado confiable en el mundo nautico.
               Productos de calidad y servicio excepcional.
@@ -98,6 +98,9 @@ const Footer = () => {
           <p className="text-primary-foreground/50 text-xs flex items-center gap-2">
             <Anchor className="w-3 h-3 text-secondary" />
             Respaldo - Servicio - Calidad
+          </p>
+          <p className="text-primary-foreground/30 text-[10px] tracking-wide uppercase">
+            Página creada por Angelbh
           </p>
         </div>
       </div>

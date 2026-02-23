@@ -26,6 +26,8 @@ const lineDescriptions: Record<string, string> = {
     "Aceites Yamalube premium certificados para motores marinos de 2 y 4 tiempos. Protección y rendimiento garantizados.",
 };
 
+const switchableLineIds = ["productiva", "deportiva", "lubricantes"];
+
 const LineaPage = () => {
   const { lineaId } = useParams<{ lineaId: string }>();
   const navigate = useNavigate();
@@ -38,6 +40,9 @@ const LineaPage = () => {
 
   const line = productLines.find((l) => l.id === lineaId);
   const description = lineDescriptions[lineaId || ""] || "";
+  const switchableLines = productLines.filter((productLine) =>
+    switchableLineIds.includes(productLine.id)
+  );
 
   const activeCat = activeCategory
     ? line?.categories.find((c) => c.id === activeCategory) ?? null
@@ -113,6 +118,34 @@ const LineaPage = () => {
       <Header />
 
       <main className="pt-24">
+        <section className="border-b border-gray-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 sticky top-20 z-30">
+          <div className="container mx-auto px-4 py-4">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground text-center mb-3">
+              Cambiar línea
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {switchableLines.map((productLine) => {
+                const isActive = productLine.id === line.id;
+
+                return (
+                  <button
+                    key={productLine.id}
+                    onClick={() => navigate(`/catalogo/${productLine.id}`)}
+                    className={`px-5 py-2 rounded-full text-xs md:text-sm font-bold uppercase tracking-wide border-2 transition-all ${
+                      isActive
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white text-primary border-primary/25 hover:border-primary"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {productLine.title.replace("Linea ", "").replace("Línea ", "")}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* Back nav */}
         <div className="container mx-auto px-4 pt-6 pb-2">
           <button

@@ -5,20 +5,23 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-
-// Password admin (cambiar luego por algo más seguro)
-const ADMIN_PASSWORD = 'admin123';
+import { isAdminConfigured, loginAdmin } from '@/lib/adminAuth';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const isConfigured = isAdminConfigured();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (password === ADMIN_PASSWORD) {
-      localStorage.setItem('isAdmin', 'true');
+
+    if (!isConfigured) {
+      setError('Configura VITE_ADMIN_PASSWORD en tu .env.local para activar el acceso admin.');
+      return;
+    }
+
+    if (loginAdmin(password)) {
       navigate('/admin/dashboard');
     } else {
       setError('Contraseña incorrecta');
@@ -56,9 +59,11 @@ export default function AdminLogin() {
               Ingresar
             </Button>
 
-            <p className="text-sm text-gray-500 text-center mt-4">
-              Password por defecto: admin123
-            </p>
+            {!isConfigured && (
+              <p className="text-sm text-amber-600 text-center mt-4">
+                Falta configurar la contraseña admin en variables de entorno.
+              </p>
+            )}
           </form>
         </CardContent>
       </Card>

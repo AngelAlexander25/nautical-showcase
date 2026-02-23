@@ -13,6 +13,47 @@ import type { Product, ProductLine } from '@/data/catalogData';
 import { AlertCircle, Edit2, LogOut, Plus, Save, Trash2, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TemplateReferenceDialog } from '@/components/TemplateReferenceDialog';
+import { clearAdminSession, isAdminAuthenticated } from '@/lib/adminAuth';
+
+const LOCAL_BACKUPS_KEY = 'catalogAdminLocalBackups';
+const LOCAL_BACKUPS_MAX = 10;
+
+const countProducts = (lines: ProductLine[]) =>
+  lines.reduce(
+    (lineAcc, line) =>
+      lineAcc + line.categories.reduce((catAcc, category) => catAcc + category.products.length, 0),
+    0
+  );
+
+const downloadJsonFile = (filename: string, payload: unknown) => {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+
+  URL.revokeObjectURL(url);
+};
+
+const saveLocalBackupSnapshot = (lines: ProductLine[]) => {
+  const snapshot = {
+    savedAt: new Date().toISOString(),
+    totalProducts: countProducts(lines),
+    productLines: lines,
+  };
+
+  try {
+    const raw = localStorage.getItem(LOCAL_BACKUPS_KEY);
+    const previous = raw ? (JSON.parse(raw) as typeof snapshot[]) : [];
+    const next = [snapshot, ...previous].slice(0, LOCAL_BACKUPS_MAX);
+
+    localStorage.setItem(LOCAL_BACKUPS_KEY, JSON.stringify(next));
+  } catch (e) {
+    console.error('No se pudo guardar respaldo local del admin:', e);
+  }
+};
 
 // Templates de fichas técnicas según tipo de producto
 const SPEC_TEMPLATES = {
@@ -117,14 +158,13 @@ export default function AdminDashboard() {
   ]);
 
   useEffect(() => {
-    const isAdmin = localStorage.getItem('isAdmin');
-    if (!isAdmin) {
+    if (!isAdminAuthenticated()) {
       navigate('/admin');
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('isAdmin');
+    clearAdminSession();
     navigate('/');
   };
 
@@ -176,6 +216,7 @@ export default function AdminDashboard() {
     });
 
     try {
+      saveLocalBackupSnapshot(data);
       await updateProductLines(newData);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
@@ -263,6 +304,16 @@ export default function AdminDashboard() {
     setSelectedProduct({ ...selectedProduct, specs: { ...template } });
   };
 
+  const handleDownloadBackup = () => {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+
+    downloadJsonFile(`catalog-backup-${timestamp}.json`, {
+      exportedAt: new Date().toISOString(),
+      totalProducts: countProducts(data),
+      productLines: data,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -273,6 +324,9 @@ export default function AdminDashboard() {
             <p className="text-sm text-gray-500">Editor de Catálogo</p>
           </div>
           <div className="flex gap-2">
+            <Button onClick={handleDownloadBackup} variant="outline">
+              Descargar respaldo JSON
+            </Button>
             {saving && (
               <Alert className="py-2 px-4 bg-blue-50 border-blue-200">
                 <AlertDescription className="text-blue-800">⏳ Guardando y sincronizando...</AlertDescription>

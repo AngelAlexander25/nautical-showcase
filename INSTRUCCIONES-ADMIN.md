@@ -12,8 +12,12 @@
    http://localhost:8080/admin
    ```
 
-3. **Ingresa con la contraseña:**
-   - Password: `admin123`
+3. **Configura la contraseña admin en `.env.local`:**
+  ```env
+  VITE_ADMIN_PASSWORD=TuPasswordSeguraAqui
+  ```
+
+4. **Ingresa con esa contraseña** en `/admin`.
 
 ---
 
@@ -178,11 +182,20 @@ import { productLines } from "@/data/catalogData";
 
 ---
 
-## 🔒 Cambiar la Contraseña
+## 🔒 Seguridad de Contraseña Admin
 
-Edita `src/pages/AdminLogin.tsx`:
-```tsx
-const ADMIN_PASSWORD = 'TuNuevaContraseña123';
+La contraseña admin ya no se configura en código.
+
+Configúrala en `.env.local`:
+
+```env
+VITE_ADMIN_PASSWORD=TuPasswordSeguraAqui
+```
+
+Opcional (duración de sesión en horas, por defecto 12):
+
+```env
+VITE_ADMIN_SESSION_HOURS=12
 ```
 
 ---

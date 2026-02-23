@@ -3,6 +3,8 @@ import { getStore } from '@netlify/blobs';
 const STORE_NAME = 'catalog-store';
 const PRODUCT_LINES_KEY = 'productLines';
 const UPDATED_AT_KEY = 'updatedAt';
+const LAST_BACKUP_KEY = 'lastBackupKey';
+const BACKUP_PREFIX = 'backups/';
 
 const jsonHeaders = {
   'Content-Type': 'application/json',
@@ -26,6 +28,23 @@ const parseRequestBody = (rawBody) => {
     return null;
   }
 };
+
+const countProducts = (lines) => {
+  if (!Array.isArray(lines)) return 0;
+
+  return lines.reduce((lineAcc, line) => {
+    const categories = Array.isArray(line?.categories) ? line.categories : [];
+
+    const lineProducts = categories.reduce((catAcc, category) => {
+      const products = Array.isArray(category?.products) ? category.products : [];
+      return catAcc + products.length;
+    }, 0);
+
+    return lineAcc + lineProducts;
+  }, 0);
+};
+
+const createBackupKey = () => `${BACKUP_PREFIX}${Date.now()}`;
 
 const getManualCredentials = () => {
   const rawSiteID =
@@ -99,14 +118,17 @@ export async function handler(event) {
 
   if (method === 'GET') {
     try {
-      const [productLines, updatedAt] = await Promise.all([
+      const [productLines, updatedAt, lastBackupKey] = await Promise.all([
         store.get(PRODUCT_LINES_KEY, { type: 'json' }),
         store.get(UPDATED_AT_KEY),
+        store.get(LAST_BACKUP_KEY),
       ]);
 
       return createResponse(200, {
         productLines: Array.isArray(productLines) ? productLines : null,
         updatedAt: updatedAt || null,
+        totalProducts: countProducts(productLines),
+        lastBackupKey: lastBackupKey || null,
       });
     } catch (error) {
       return createResponse(500, formatStorageError(error));
@@ -128,8 +150,44 @@ export async function handler(event) {
     }
 
     const updatedAt = body?.updatedAt || new Date().toISOString();
+    const isForceOverwrite = event.queryStringParameters?.force === '1';
 
     try {
+      const [existingProductLines, existingUpdatedAt] = await Promise.all([
+        store.get(PRODUCT_LINES_KEY, { type: 'json' }),
+        store.get(UPDATED_AT_KEY),
+      ]);
+
+      const existingCount = countProducts(existingProductLines);
+      const incomingCount = countProducts(productLines);
+
+      if (existingCount > 0 && incomingCount === 0 && !isForceOverwrite) {
+        return createResponse(409, {
+          error:
+            'Protección activa: se bloqueó un guardado vacío para evitar pérdida accidental de catálogo.',
+          existingCount,
+          incomingCount,
+        });
+      }
+
+      let backupKey = null;
+      if (Array.isArray(existingProductLines) && existingProductLines.length > 0) {
+        backupKey = createBackupKey();
+
+        await Promise.all([
+          store.set(
+            backupKey,
+            JSON.stringify({
+              productLines: existingProductLines,
+              updatedAt: existingUpdatedAt || null,
+              backedUpAt: new Date().toISOString(),
+            }),
+            { contentType: 'application/json' }
+          ),
+          store.set(LAST_BACKUP_KEY, backupKey),
+        ]);
+      }
+
       await Promise.all([
         store.set(PRODUCT_LINES_KEY, JSON.stringify(productLines), {
           contentType: 'application/json',
@@ -140,6 +198,8 @@ export async function handler(event) {
       return createResponse(200, {
         ok: true,
         updatedAt,
+        backupKey,
+        totalProducts: incomingCount,
       });
     } catch (error) {
       return createResponse(500, formatStorageError(error));
